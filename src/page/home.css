@@ -1,0 +1,351 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:700');
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 600px; 
+}
+
+.image-container {
+    height: 500px;
+    width: 400px;
+    border-radius: 20px; 
+    position: relative;
+}
+
+.image-container img{
+    width: 100%;
+    height: 100%;
+     object-fit: cover;
+    border-radius: 20px;
+   
+    
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+    
+}
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .container {
+    width: 90%;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  .hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f5f5f5;
+    padding: 50px 0;
+  }
+  
+  .hero .content {
+    max-width: 50%;
+  }
+  
+  .hero img {
+    width: 400px;
+    border-radius: 20px;
+  }
+  .btn-primary:hover{
+    background-color: rgb(16, 235, 16);
+
+  }
+  .h1{
+    color: rgb(255, 94, 0);
+
+  }
+  
+  .btn-primary {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .section-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .service-grid, .department-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .service-card, .department-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .contact {
+    text-align: center;
+    background: #007bff;
+    color: white;
+    padding: 30px;
+    margin-top: 20px;
+  }
+  .cardiology{
+    height: 150px;
+    width: 180px;
+  }
+  .orthopedic{
+    height: 150px;
+    width: 180px;
+  }
+  .pediatrics{
+    height: 150px;
+    width: 180px;
+  }
+  .gynecology{
+    height: 150px;
+    width: 180px;
+  }
+  .emergency{
+    height: 150px;
+    width: 180px;
+  }
+  .neurology{
+    height: 150px;
+    width: 180px;
+  }
+  .department-card img{
+    animation: fadeIn 1s ease-in-out;
+
+  }
+
+  /* .design{
+    margin:0%;
+    font-family:'Roboto';
+    text-align: left;
+
+  }
+  .flip{
+   color: #007bff;
+   text-transform: uppercase;
+   font-size: 36px;
+   font-weight: bold;
+   padding-top:50px ;
+   position: relative;
+   width:100%;
+  bottom:45%;
+  display:block;
+  }
+.flip div div{
+  color:#fff;
+  padding:4px 12px;
+  height:45px;
+  margin-bottom:30px;
+  display:inline-block;
+}
+.flip div:first-child {
+  animation: show 5s linear infinite;
+}
+.flip div div {
+  background:#42c58a;
+}
+.flip div:first-child div {
+  background:#4ec7f3;
+}
+.flip div:last-child div {
+  background:#DC143C;
+}
+@keyframes show {
+  0% {margin-top:-270px;}
+  5% {margin-top:-180px;}
+  33% {margin-top:-180px;}
+  38% {margin-top:-90px;}
+  66% {margin-top:-90px;}
+  71% {margin-top:0px;}
+  99.99% {margin-top:0px;}
+  100% {margin-top:-270px;}
+} */
+.design {
+  font-size: 2em;
+  font-weight: bold;
+  text-shadow: 3px red;
+  margin-top: 50px;
+
+}
+
+.flip {
+  display: inline-block;
+  height: 50px;
+  overflow: hidden;
+  vertical-align: middle;
+  text-transform: lowercase;
+}
+
+.flip div {
+  color: #0088cc;
+  animation: flip 5s infinite;
+  height: 50px;
+  line-height: 50px;
+}
+
+@keyframes flip {
+  0%, 33% { transform: translateY(0%); }
+  34%, 66% { transform: translateY(-100%); }
+  67%, 100% { transform: translateY(-200%); }
+
+}
+
+.shadow-dance-text {
+  font-size: 4rem;
+  color: #fff;
+  text-shadow: 5px 5px 0 #ff005e, 10px 10px 0 #00d4ff;
+  animation: shadow-dance 2s infinite;
+}
+
+@keyframes shadow-dance {
+  0%, 100% {
+      text-shadow: 5px 5px 0 #ff005e, 10px 10px 0 #00d4ff;
+  }
+  50% {
+      text-shadow: -5px -5px 0 #00d4ff, -10px -10px 0 #ff005e;
+  }
+}
+/* General Styles */
+.services {
+  text-align: center;
+  padding: 50px 0;
+  background: #f8f9fa;
+  overflow: hidden;
+}
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+/* Carousel Wrapper */
+.carousel {
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Carousel Inner (Sliding Effect) */
+.carousel-inner {
+  display: flex;
+  width: 400%;
+  animation: slide 12s infinite;
+}
+
+/* Individual Service Cards */
+.service-card {
+  flex: 1;
+  min-width: 100%;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.5s, box-shadow 0.5s;
+}
+
+.service-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+@keyframes slide {
+  0%, 25% { transform: translateX(0%); }
+  30%, 50% { transform: translateX(-100%); }
+  55%, 75% { transform: translateX(-200%); }
+  80%, 100% { transform: translateX(-300%); }
+}
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* Hero Section */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 50px;
+  background: linear-gradient(to right, #007bff, #6610f2);
+  color: white;
+}
+
+.hero .content {
+  max-width: 50%;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+.hero .flip {
+  display: inline-block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: yellow;
+  animation: flipText 6s infinite;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+/* Flip Animation for Changing Text */
+@keyframes flipText {
+  0% { content: "Appointments"; }
+  33% { content: "Doctors"; }
+  66% { content: "Patients"; }
+  100% { content: "Appointments"; }
+}
+
+/* Button */
+.btn-primary {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  background-color: #ffcc00;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #ff9900;
+}
+
+/* service section*/
+.patient-Managment{
+  width: 100%;
+  position: relative;
+  margin: auto;
+}
+.pmanagment{
+  height:580px;
+  width: 1600px;
+  border-radius: 2px;
+  object-fit: cover; 
+}
+/* yhi se start he carusel */
+.legend{
+  object-fit: cover;
+  width: 700px;
+}
