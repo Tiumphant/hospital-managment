@@ -5,11 +5,11 @@ import DoctorDashboard from "./DoctorDashboard";
 function Appointmentlist() {
     const [data, setData] = useState([])
     useEffect(() => {
-<<<<<<< HEAD
+
         axios.get("http://localhost:8080/api/appointment")
-=======
+
         axios.get("http://localhost:8000/api/appointment")
->>>>>>> f5803c379b19f618683aff0f87cca4e08ccbd4e9
+
             .then((response) => {
                 setData(response.data)
                 console.log("Fetched data:", response.data)
@@ -19,11 +19,11 @@ function Appointmentlist() {
             })
     }, []) 
     function Appointmentdelete(id) {
-<<<<<<< HEAD
+
         axios.delete(`http://localhost:8080/api/appointment/${id}`)
-=======
+
         axios.delete(`http://localhost:8000/api/appointment/${id}`)
->>>>>>> f5803c379b19f618683aff0f87cca4e08ccbd4e9
+
             .then((response) => {
                 console.log("Data successfully deleted:", response.data)
                 setData(prevData => prevData.filter(user => user._id !== id)) 
