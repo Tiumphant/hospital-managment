@@ -5,11 +5,15 @@ import DoctorDashboard from "./DoctorDashboard";
 function Appointmentlist() {
     const [data, setData] = useState([])
     useEffect(() => {
+<<<<<<< HEAD
 
         axios.get("http://localhost:8080/api/appointment")
 
         axios.get("http://localhost:8000/api/appointment")
 
+=======
+        axios.get("http://localhost:8000/api/appointment")
+>>>>>>> 72d5d6d07f6484befc4275ff7903ef497da8b2e7
             .then((response) => {
                 setData(response.data)
                 console.log("Fetched data:", response.data)
@@ -19,11 +23,15 @@ function Appointmentlist() {
             })
     }, []) 
     function Appointmentdelete(id) {
+<<<<<<< HEAD
 
         axios.delete(`http://localhost:8080/api/appointment/${id}`)
 
         axios.delete(`http://localhost:8000/api/appointment/${id}`)
 
+=======
+        axios.delete(`http://localhost:8000/api/appointment/${id}`)
+>>>>>>> 72d5d6d07f6484befc4275ff7903ef497da8b2e7
             .then((response) => {
                 console.log("Data successfully deleted:", response.data)
                 setData(prevData => prevData.filter(user => user._id !== id)) 

@@ -186,6 +186,11 @@ function Registration() {
               required
             />
           </div>
+<<<<<<< HEAD
+=======
+
+          {/* Role Selection */}
+>>>>>>> 72d5d6d07f6484befc4275ff7903ef497da8b2e7
           <div className="mb-3">
             <label>Select Role:</label>
             <select name="role" value={formData.role} onChange={handleChange} className="form-control">
@@ -195,6 +200,10 @@ function Registration() {
             </select>
           </div>
 
+<<<<<<< HEAD
+=======
+          {/* Dynamic Form Fields Based on Role */}
+>>>>>>> 72d5d6d07f6484befc4275ff7903ef497da8b2e7
           {formData.role === "patient" && (
             <>
               <div className="mb-3">
