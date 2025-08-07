@@ -7,9 +7,15 @@ function AppointmentA() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const BASE_URL = process.env.REACT_APP_API_URL;
+  const api = `${BASE_URL}/api/appointment`;
+  const doctorApi = `${BASE_URL}/api/role`;
+  const patientApi = `${BASE_URL}/api/patient`;
+  const departmentApi = `${BASE_URL}/api/department`;
+
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/appointment")
+      .get(api)
       .then((res) => {
         setAppointments(res.data);
         setLoading(false);
@@ -26,7 +32,7 @@ function AppointmentA() {
       return;
 
     axios
-      .delete(`http://localhost:8080/api/appointment/${id}`)
+      .delete(`${api}/${id}`)
       .then((res) => {
         setAppointments((prev) => prev.filter((item) => item._id !== id));
       })

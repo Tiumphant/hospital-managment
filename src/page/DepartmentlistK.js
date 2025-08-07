@@ -2,42 +2,47 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Dashboard from "./Dashboard";
+
 function DepartmentlistK() {
   const [data, setData] = useState([]);
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/department")
+      .get(`${API_URL}/department`)
       .then((response) => {
         setData(response.data);
-        console.log("fetch get data", response.data);
+        console.log("Fetched data:", response.data);
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Error fetching data:", err);
       });
-  }, []);
+  }, [API_URL]);
+
   function Departmentdelete(id) {
     axios
-      .delete(`http://localhost:8080/api/department/${id}`)
+      .delete(`${API_URL}/department/${id}`)
       .then((response) => {
-        console.log("data succesfully deleted", response.data);
-        setData(data.filter((user) => user._id != id));
+        console.log("Data successfully deleted:", response.data);
+        setData((prevData) => prevData.filter((user) => user._id !== id));
       })
       .catch((err) => {
-        console.log("error in fetching data", err);
+        console.error("Error deleting data:", err);
       });
   }
+
   return (
     <>
       <Dashboard />
-      <h1 className="text-center primary">List of Table</h1>
+      <h1 className="text-center primary">List of Departments</h1>
       <table className="table table-bordered shadow">
         <thead>
           <tr>
             <th>Name</th>
-            <th>description</th>
-            <th>head_doctor_name</th>
-            <th>operation</th>
+            <th>Description</th>
+            <th>Head Doctor</th>
+            <th>Operation</th>
           </tr>
         </thead>
         <tbody>
@@ -45,12 +50,15 @@ function DepartmentlistK() {
             <tr key={item._id}>
               <td>{item.name}</td>
               <td>{item.description}</td>
-              <td>{item.head_doctor_id?.name || "not assign"}</td>
+              <td>{item.head_doctor_id?.name || "Not Assigned"}</td>
               <td>
-                <button>
-                  <Link to={`/departmentC/${item._id}`}>Edit</Link>
-                </button>
-                <button onClick={() => Departmentdelete(item._id)}>
+                <Link to={`/departmentC/${item._id}`}>
+                  <button className="btn btn-primary mx-2">Edit</button>
+                </Link>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => Departmentdelete(item._id)}
+                >
                   Delete
                 </button>
               </td>
@@ -61,4 +69,5 @@ function DepartmentlistK() {
     </>
   );
 }
+
 export default DepartmentlistK;

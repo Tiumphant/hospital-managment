@@ -8,7 +8,7 @@ function RoleC() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isEmpty, setIsEmpty] = useState(false);
-  const urlapi = "http://localhost:8080/api/role";
+  const urlapi = `${process.env.REACT_APP_API_URL}/api/role`;
   const { id } = useParams();
   const navigate = useNavigate();
 

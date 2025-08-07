@@ -4,6 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams } from "react-router-dom";
 import Dashboard from "./Dashboard";
 
+const API_BASE = process.env.REACT_APP_API_URL;
+
 function DepartmentC() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -11,8 +13,9 @@ function DepartmentC() {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const api = "http://localhost:8080/api/department";
-  const doctorApi = "http://localhost:8080/api/role";
+  const departmentApi = `${API_BASE}/api/department`;
+  const doctorApi = `${API_BASE}/api/role`;
+
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -34,7 +37,7 @@ function DepartmentC() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(api, {
+      const response = await axios.post(departmentApi, {
         name,
         description,
         head_doctor_id: headDoctorId || null,
@@ -52,7 +55,7 @@ function DepartmentC() {
     if (!id) return;
     setLoading(true);
     try {
-      const response = await axios.put(`${api}/${id}`, {
+      const response = await axios.put(`${departmentApi}/${id}`, {
         name,
         description,
         head_doctor_id: headDoctorId || null,
@@ -68,7 +71,7 @@ function DepartmentC() {
 
   const deleteData = async () => {
     try {
-      await axios.delete(`${api}/${id}`);
+      await axios.delete(`${departmentApi}/${id}`);
       console.log("Deleted successfully");
       navigate("/departmentlistK");
     } catch (error) {
@@ -78,7 +81,7 @@ function DepartmentC() {
 
   const getOne = async () => {
     try {
-      const response = await axios.get(`${api}/${id}`);
+      const response = await axios.get(`${departmentApi}/${id}`);
       if (response.data) {
         setName(response.data.name || "");
         setDescription(response.data.description || "");

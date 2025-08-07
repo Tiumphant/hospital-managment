@@ -16,14 +16,14 @@ export default function PatientCard() {
   const getOnePatient = async (patientId) => {
     try {
       const res = await axios.get(
-        `http://localhost:8080/api/patient/${patientId}`
+        `${process.env.REACT_APP_API_URL}/api/patient`
       );
       const data = res.data;
 
       console.log("Fetched Patient:", data);
 
       setViewPatient({
-        image: `http://localhost:8000/upload/${data.image}`,
+        image: `${process.env.REACT_APP_API_URL}/api/upload${data.image}`,
         name: data.name,
         email: data.email,
         number: data.number,

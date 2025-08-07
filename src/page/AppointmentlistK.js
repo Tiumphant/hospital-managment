@@ -2,11 +2,16 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Dashboard from "./Dashboard";
+
 function AppointmentlistK() {
   const [data, setData] = useState([]);
+
+  const BASE_URL = process.env.REACT_APP_API_URL;
+  const api = `${BASE_URL}/api/appointment`;
+
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/appointment")
+      .get(api)
       .then((response) => {
         setData(response.data);
         console.log("Fetched data:", response.data);
@@ -14,18 +19,19 @@ function AppointmentlistK() {
       .catch((err) => {
         console.error("Error fetching data:", err);
       });
-  }, []);
-  function Appointmentdelete(id) {
+  }, [api]);
+
+  const Appointmentdelete = (id) => {
     axios
-      .delete(`http://localhost:8080/api/appointment/${id}`)
+      .delete(`${api}/${id}`)
       .then((response) => {
         console.log("Data successfully deleted:", response.data);
-        setData((prevData) => prevData.filter((user) => user._id !== id));
+        setData((prevData) => prevData.filter((item) => item._id !== id));
       })
       .catch((err) => {
         console.error("Error deleting data:", err);
       });
-  }
+  };
 
   return (
     <>
@@ -49,7 +55,7 @@ function AppointmentlistK() {
               <td>{item.patient_id?.name || "Not Assigned"}</td>
               <td>{item.doctor_id?.name || "Not Assigned"}</td>
               <td>{item.department_id?.name || "Not Assigned"}</td>
-              <td>{item.appointment_date}</td>
+              <td>{new Date(item.appointment_date).toLocaleDateString()}</td>
               <td>{item.status}</td>
               <td>{item.reason}</td>
               <td>

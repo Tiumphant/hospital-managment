@@ -11,7 +11,9 @@ function PatientlistK() {
 
   const fetchPatients = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/patient");
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/patient`
+      );
       setData(response.data);
       setFilteredData(response.data);
     } catch (error) {
@@ -37,7 +39,7 @@ function PatientlistK() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/api/patient/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/patient/${id}`);
       alert("Patient deleted successfully.");
       const newData = data.filter((item) => item._id !== id);
       setData(newData);

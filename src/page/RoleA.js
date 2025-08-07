@@ -9,8 +9,8 @@ function RoleA() {
 
   const update = async () => {
     try {
-      let api = await axios.get("http://localhost:8080/api/role");
-      let result = api.data;
+      const urlapi = `${process.env.REACT_APP_API_URL}/api/role`;
+      let result = urlapi.data;
       console.log("Fetched API successfully:", result);
 
       setData(result);

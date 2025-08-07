@@ -4,261 +4,207 @@ import { useNavigate, Link, useParams } from "react-router-dom";
 import "./registration.css";
 
 function Registration() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [age, setAge] = useState("");
-  const [gender, setGender] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isEmpty, setIsEmpty] = useState(false);
-
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    age: "",
+    gender: "",
+    contactNumber: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
     role: "patient",
     details: {},
   });
 
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  const api = "http://localhost:8080/api/registration";
-  const id = useParams();
+  const { id } = useParams();
+
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
+  const api = `${API_BASE_URL}/api/registration`;
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  const handleDetailsChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, details: { ...form.details, [name]: value } });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    setIsEmpty(true);
-
-    if (password !== confirmPassword) {
+    if (form.password !== form.confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
-    if (id.id) {
-      putData();
-    } else {
-      postData();
-    }
-  };
 
-  const postData = async (e) => {
     try {
-      const response = await axios.post(api, {
-        firstName,
-        lastName,
-        age,
-        gender,
-        contactNumber,
-        email,
-        password,
-        role: formData.role,
-        details: formData.details,
-      });
+      const payload = {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        age: form.age,
+        gender: form.gender,
+        contactNumber: form.contactNumber,
+        email: form.email,
+        password: form.password,
+        role: form.role,
+        details: form.details,
+      };
 
-      console.log("Registration successful:", response.data);
+      if (id) {
+        await axios.put(`${api}/${id}`, payload);
+        console.log("User updated.");
+      } else {
+        await axios.post(api, payload);
+        console.log("Registration successful.");
+      }
+
       navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed.");
+      setError(err.response?.data?.message || "An error occurred.");
     }
-  };
-  const putData = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.put(`${api}/${id}`, {
-        firstName,
-        lastName,
-        age,
-        gender,
-        contactNumber,
-        email,
-        password,
-        role: formData.role,
-        details: formData.details,
-      });
-
-      console.log(response.data);
-      navigate("/login");
-    } catch (error) {
-      console.log("Error updating:", error);
-    }
-  };
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, role: e.target.value });
-  };
-
-  const handleDetailsChange = (e) => {
-    setFormData({
-      ...formData,
-      details: { ...formData.details, [e.target.name]: e.target.value },
-    });
   };
 
   return (
     <div className="registration">
       <div className="card">
         <h2>Registration Form</h2>
-
         {error && <p className="text-danger text-center">{error}</p>}
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-3">
+          <input
+            type="text"
+            name="firstName"
+            className="form-control mb-3"
+            placeholder="First Name"
+            value={form.firstName}
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="text"
+            name="lastName"
+            className="form-control mb-3"
+            placeholder="Last Name"
+            value={form.lastName}
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            className="form-control mb-3"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="text"
+            name="contactNumber"
+            className="form-control mb-3"
+            placeholder="Phone Number"
+            value={form.contactNumber}
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="number"
+            name="age"
+            className="form-control mb-3"
+            placeholder="Age"
+            value={form.age}
+            onChange={handleInputChange}
+            required
+          />
+          <select
+            name="gender"
+            className="form-control mb-3"
+            value={form.gender}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+          <input
+            type="password"
+            name="password"
+            className="form-control mb-3"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="password"
+            name="confirmPassword"
+            className="form-control mb-3"
+            placeholder="Confirm Password"
+            value={form.confirmPassword}
+            onChange={handleInputChange}
+            required
+          />
+          <label>Select Role:</label>
+          <select
+            name="role"
+            className="form-control mb-3"
+            value={form.role}
+            onChange={handleInputChange}
+          >
+            <option value="patient">Patient</option>
+            <option value="doctor">Doctor</option>
+            <option value="admin">Admin</option>
+          </select>
+
+          {form.role === "patient" && (
             <input
               type="text"
-              className="form-control"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
+              name="diagnosis"
+              className="form-control mb-3"
+              placeholder="Enter Diagnosis"
+              onChange={handleDetailsChange}
             />
-          </div>
-
-          <div className="mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <input
-              type="email"
-              className="form-control"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Phone Number"
-              value={contactNumber}
-              onChange={(e) => setContactNumber(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <input
-              type="number"
-              className="form-control"
-              placeholder="Age"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <select
-              className="form-control"
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
-              required
-            >
-              <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          <div className="mb-3">
-            <input
-              type="password"
-              className="form-control"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <input
-              type="password"
-              className="form-control"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <label>Select Role:</label>
-            <select
-              className="form-control"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-            >
-              <option value="patient">Patient</option>
-              <option value="doctor">Doctor</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
-          {formData.role === "patient" && (
-            <div className="mb-3">
-              <label>Diagnosis:</label>
-              <input
-                type="text"
-                className="form-control"
-                name="diagnosis"
-                placeholder="Enter Diagnosis"
-                onChange={handleDetailsChange}
-              />
-            </div>
           )}
 
-          {formData.role === "doctor" && (
+          {form.role === "doctor" && (
             <>
-              <div className="mb-3">
-                <label>Specialization:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="specialization"
-                  placeholder="Enter Specialization"
-                  onChange={handleDetailsChange}
-                />
-              </div>
-              <div className="mb-3">
-                <label>Experience (Years):</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="experience"
-                  placeholder="Enter Experience"
-                  onChange={handleDetailsChange}
-                />
-              </div>
+              <input
+                type="text"
+                name="specialization"
+                className="form-control mb-3"
+                placeholder="Enter Specialization"
+                onChange={handleDetailsChange}
+              />
+              <input
+                type="number"
+                name="experience"
+                className="form-control mb-3"
+                placeholder="Enter Experience (Years)"
+                onChange={handleDetailsChange}
+              />
             </>
           )}
 
-          {formData.role === "admin" && (
-            <div className="mb-3">
-              <label>Unique Identity:</label>
-              <input
-                type="text"
-                className="form-control"
-                name="uniqueIdentity"
-                placeholder="Enter Unique Identity"
-                onChange={handleDetailsChange}
-              />
-            </div>
+          {form.role === "admin" && (
+            <input
+              type="text"
+              name="uniqueIdentity"
+              className="form-control mb-3"
+              placeholder="Enter Unique Identity"
+              onChange={handleDetailsChange}
+            />
           )}
 
           <button type="submit" className="btn btn-primary w-100">
-            Register
+            {id ? "Update" : "Register"}
           </button>
 
           <p className="mt-3 text-center">
@@ -269,4 +215,5 @@ function Registration() {
     </div>
   );
 }
+
 export default Registration;

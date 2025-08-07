@@ -16,9 +16,9 @@ function PatientC() {
   const [doctors, setDoctors] = useState([]);
   const [file, setFile] = useState(null);
 
-  const api = "http://localhost:8080/api/patient";
-  const doctorApi = "http://localhost:8080/api/role";
-
+  const BASE_URL = process.env.REACT_APP_API_URL;
+  const api = `${BASE_URL}/api/appointment`;
+  const doctorApi = `${BASE_URL}/api/role`;
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -195,7 +195,7 @@ function PatientC() {
                 type="file"
                 className="form-control"
                 onChange={(e) => setFile(e.target.files[0])}
-                required={!id} // image required only on create
+                required={!id}
               />
             </div>
 

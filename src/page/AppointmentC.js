@@ -16,11 +16,11 @@ function AppointmentC() {
   const [patients, setPatients] = useState([]);
   const [departments, setDepartments] = useState([]);
 
-  const api = "http://localhost:8080/api/appointment";
-  const doctorApi = "http://localhost:8080/api/role";
-  const patientApi = "http://localhost:8080/api/patient";
-  const departmentApi = "http://localhost:8080/api/department";
-
+  const BASE_URL = process.env.REACT_APP_API_URL;
+  const api = `${BASE_URL}/api/appointment`;
+  const doctorApi = `${BASE_URL}/api/role`;
+  const patientApi = `${BASE_URL}/api/patient`;
+  const departmentApi = `${BASE_URL}/api/department`;
   const { id } = useParams();
   const navigate = useNavigate();
 

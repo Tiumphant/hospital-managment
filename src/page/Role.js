@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import PatientDashboard from "./PatientDashboard";
 
@@ -7,8 +7,10 @@ function Role() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isEmpty, setIsEmpty] = useState(false);
-  const urlapi = "http://localhost:8080/api/role";
+
   const { id } = useParams();
+  const navigate = useNavigate();
+  const urlapi = `${process.env.REACT_APP_API_URL}/api/role`;
 
   useEffect(() => {
     if (id) {
@@ -35,48 +37,22 @@ function Role() {
     event.preventDefault();
     setIsEmpty(true);
 
-    if (!name || !description) {
-      return;
-    }
+    if (!name || !description) return;
 
     try {
       if (id) {
-        await updateRole(id);
+        await axios.put(`${urlapi}/${id}`, { name, description });
+        console.log("Role updated successfully");
       } else {
-        await createRole();
+        await axios.post(urlapi, { name, description });
+        console.log("Role created successfully");
       }
+
+      navigate("/roles"); // redirect to roles list (adjust route as needed)
     } catch (err) {
-      console.error("Error submitting form:", err);
-    }
-  };
-
-  const createRole = async () => {
-    try {
-      const response = await axios.post(urlapi, { name, description });
-      if (response.status === 201) {
-        console.log("Role created successfully:", response.data);
-      }
-    } catch (error) {
       console.error(
-        "Error creating role:",
-        error.response?.data || error.message
-      );
-    }
-  };
-
-  const updateRole = async (id) => {
-    try {
-      const response = await axios.put(`${urlapi}/${id}`, {
-        name,
-        description,
-      });
-      if (response.status === 200) {
-        console.log("Role updated successfully:", response.data);
-      }
-    } catch (error) {
-      console.error(
-        "Error updating role:",
-        error.response?.data || error.message
+        "Error submitting form:",
+        err.response?.data || err.message
       );
     }
   };
@@ -84,33 +60,42 @@ function Role() {
   return (
     <div>
       <PatientDashboard />
-      <form onSubmit={handleSubmit}>
-        <label>
-          <input
-            type="text"
-            value={name}
-            placeholder="Name"
-            onChange={(event) => setName(event.target.value)}
-          />
-          {isEmpty && !name && (
-            <span style={{ color: "red" }}>Must not be empty</span>
-          )}
-        </label>
-        <br />
-        <label>
-          <input
-            type="text"
-            value={description}
-            placeholder="Description"
-            onChange={(event) => setDescription(event.target.value)}
-          />
-          {isEmpty && !description && (
-            <span style={{ color: "red" }}>Must not be empty</span>
-          )}
-        </label>
-        <br />
-        <button type="submit">{id ? "Update" : "Submit"}</button>
-      </form>
+      <div className="container mt-4">
+        <h2>{id ? "Edit Role" : "Create Role"}</h2>
+        <form onSubmit={handleSubmit} className="mt-3">
+          <div className="mb-3">
+            <label className="form-label">Role Name:</label>
+            <input
+              type="text"
+              className="form-control"
+              value={name}
+              placeholder="Enter role name"
+              onChange={(e) => setName(e.target.value)}
+            />
+            {isEmpty && !name && (
+              <div className="text-danger">Name must not be empty</div>
+            )}
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Description:</label>
+            <input
+              type="text"
+              className="form-control"
+              value={description}
+              placeholder="Enter description"
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            {isEmpty && !description && (
+              <div className="text-danger">Description must not be empty</div>
+            )}
+          </div>
+
+          <button type="submit" className="btn btn-primary">
+            {id ? "Update Role" : "Create Role"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

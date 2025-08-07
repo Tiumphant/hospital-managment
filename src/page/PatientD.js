@@ -17,10 +17,11 @@ function PatientD() {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  const api = "http://localhost:8080/api/patient";
-  const doctorApi = "http://localhost:8080/api/role";
+  const apiBase = process.env.REACT_APP_API_URL;
+  const api = `${apiBase}/api/patient`;
+  const doctorApi = `${apiBase}/api/role`;
 
-  let { id } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,10 +33,10 @@ function PatientD() {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get(doctorApi);
-      setDoctors(response.data);
-    } catch (error) {
-      console.error("Error fetching doctors:", error);
+      const res = await axios.get(doctorApi);
+      setDoctors(res.data);
+    } catch (err) {
+      console.error("Error fetching doctors:", err);
     }
   };
 
@@ -47,81 +48,75 @@ function PatientD() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("email", email);
-      formData.append("number", number);
-      formData.append("age", age);
-      formData.append("gender", gender);
-      formData.append("address", address);
-      formData.append("assignedDoctor", assignedDoctor || "");
-      if (image) formData.append("image", image);
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("number", number);
+    formData.append("age", age);
+    formData.append("gender", gender);
+    formData.append("address", address);
+    formData.append("assignedDoctor", assignedDoctor || "");
+    if (image) formData.append("image", image);
 
-      const response = await axios.post(api, formData, {
+    try {
+      const res = await axios.post(api, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
-      console.log("Submitted:", response.data);
+      console.log("Created:", res.data);
       navigate("/patientlist");
-    } catch (error) {
-      console.error("Error submitting form:", error);
+    } catch (err) {
+      console.error("Create Error:", err);
     }
   };
 
   const editData = async (e) => {
     e.preventDefault();
-    try {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("email", email);
-      formData.append("number", number);
-      formData.append("age", age);
-      formData.append("gender", gender);
-      formData.append("address", address);
-      formData.append("assignedDoctor", assignedDoctor || "");
-      if (image) formData.append("image", image);
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("number", number);
+    formData.append("age", age);
+    formData.append("gender", gender);
+    formData.append("address", address);
+    formData.append("assignedDoctor", assignedDoctor || "");
+    if (image) formData.append("image", image);
 
-      const response = await axios.put(`${api}/${id}`, formData, {
+    try {
+      const res = await axios.put(`${api}/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
-      console.log("Updated:", response.data);
+      console.log("Updated:", res.data);
       navigate("/patientlist");
-    } catch (error) {
-      console.log("Error updating:", error);
+    } catch (err) {
+      console.error("Update Error:", err);
     }
   };
 
   const deleteData = async () => {
     try {
       await axios.delete(`${api}/${id}`);
-      console.log("Deleted successfully");
+      console.log("Deleted");
       navigate("/patientA");
-    } catch (error) {
-      console.log("Error deleting:", error);
+    } catch (err) {
+      console.error("Delete Error:", err);
     }
   };
 
   const getOne = async () => {
     try {
-      const response = await axios.get(`${api}/${id}`);
-      const data = response.data;
+      const res = await axios.get(`${api}/${id}`);
+      const data = res.data;
 
-      if (data) {
-        setName(data.name || "");
-        setEmail(data.email || "");
-        setNumber(data.number || "");
-        setAge(data.age || "");
-        setGender(data.gender?.toLowerCase() || "");
-        setAddress(data.address || "");
-        setAssignedDoctor(data.assignedDoctor?._id || "");
-        if (data.imageUrl) {
-          setPreview(data.imageUrl);
-        }
-      }
-    } catch (error) {
-      console.log("Error fetching patient:", error);
+      setName(data.name || "");
+      setEmail(data.email || "");
+      setNumber(data.number || "");
+      setAge(data.age || "");
+      setGender(data.gender?.toLowerCase() || "");
+      setAddress(data.address || "");
+      setAssignedDoctor(data.assignedDoctor?._id || "");
+      if (data.imageUrl) setPreview(data.imageUrl);
+    } catch (err) {
+      console.error("Fetch Error:", err);
     }
   };
 
@@ -225,17 +220,14 @@ function PatientD() {
               )}
             </div>
             <div className="d-flex justify-content-between">
-              <button
-                type="submit"
-                className="btn btn-success btn-lg animate-button"
-              >
+              <button type="submit" className="btn btn-success btn-lg">
                 {id ? "Update" : "Submit"}
               </button>
               {id && (
                 <button
                   type="button"
                   onClick={deleteData}
-                  className="btn btn-danger btn-lg animate-button"
+                  className="btn btn-danger btn-lg"
                 >
                   Delete
                 </button>
@@ -247,4 +239,5 @@ function PatientD() {
     </>
   );
 }
+
 export default PatientD;

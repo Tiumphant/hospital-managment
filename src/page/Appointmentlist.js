@@ -2,83 +2,106 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import DoctorDashboard from "./DoctorDashboard";
-function Appointmentlist() {
-  const [data, setData] = useState([]);
+
+function AppointmentList() {
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const BASE_URL = process.env.REACT_APP_API_URL;
+  const api = `${BASE_URL}/api/appointment`;
+
   useEffect(() => {
-    axios.get("http://localhost:8080/api/appointment");
-
-    axios.get("http://localhost:8080/api/appointment");
-
-    axios
-      .get("http://localhost:8080/api/appointment")
-
-      .then((response) => {
-        setData(response.data);
-        console.log("Fetched data:", response.data);
-      })
-      .catch((err) => {
-        console.error("Error fetching data:", err);
-      });
+    fetchAppointments();
   }, []);
-  function Appointmentdelete(id) {
-    axios.delete(`http://localhost:8080/api/appointment/${id}`);
 
-    axios.delete(`http://localhost:8080/api/appointment/${id}`);
+  const fetchAppointments = async () => {
+    try {
+      const response = await axios.get(api);
+      setAppointments(response.data);
+    } catch (err) {
+      console.error("Error fetching appointments:", err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    axios
-      .delete(`http://localhost:8080/api/appointment/${id}`)
+  const deleteAppointment = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this appointment?"
+    );
+    if (!confirmDelete) return;
 
-      .then((response) => {
-        console.log("Data successfully deleted:", response.data);
-        setData((prevData) => prevData.filter((user) => user._id !== id));
-      })
-      .catch((err) => {
-        console.error("Error deleting data:", err);
-      });
-  }
+    try {
+      await axios.delete(`${api}/${id}`);
+      setAppointments((prev) => prev.filter((item) => item._id !== id));
+      console.log("Appointment deleted successfully");
+    } catch (err) {
+      console.error("Error deleting appointment:", err);
+      alert("Failed to delete appointment.");
+    }
+  };
 
   return (
     <>
       <DoctorDashboard />
-      <h1 className="text-center primary">List of Appointments</h1>
-      <table className="table table-bordered shadow">
-        <thead>
-          <tr>
-            <th>Patient Name</th>
-            <th>Doctor Name</th>
-            <th>Department Name</th>
-            <th>Appointment Date</th>
-            <th>Status</th>
-            <th>Reason</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item) => (
-            <tr key={item._id}>
-              <td>{item.patient_id?.name || "Not Assigned"}</td>
-              <td>{item.doctor_id?.name || "Not Assigned"}</td>
-              <td>{item.department_id?.name || "Not Assigned"}</td>
-              <td>{item.appointment_date}</td>
-              <td>{item.status}</td>
-              <td>{item.reason}</td>
-              <td>
-                <Link to={`/appointmentD/${item._id}`}>
-                  <button className="btn btn-primary mx-2">Edit</button>
-                </Link>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => Appointmentdelete(item._id)}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="container py-4">
+        <h2 className="text-center text-primary mb-4">List of Appointments</h2>
+
+        {loading ? (
+          <p className="text-center">Loading appointments...</p>
+        ) : error ? (
+          <p className="text-center text-danger">
+            Failed to load appointments.
+          </p>
+        ) : appointments.length === 0 ? (
+          <p className="text-center">No appointments found.</p>
+        ) : (
+          <div className="table-responsive">
+            <table className="table table-bordered shadow-sm">
+              <thead className="table-primary">
+                <tr>
+                  <th>Patient Name</th>
+                  <th>Doctor Name</th>
+                  <th>Department Name</th>
+                  <th>Appointment Date</th>
+                  <th>Status</th>
+                  <th>Reason</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {appointments.map((item) => (
+                  <tr key={item._id}>
+                    <td>{item.patient_id?.name || "Not Assigned"}</td>
+                    <td>{item.doctor_id?.name || "Not Assigned"}</td>
+                    <td>{item.department_id?.name || "Not Assigned"}</td>
+                    <td>{new Date(item.appointment_date).toLocaleString()}</td>
+                    <td>{item.status}</td>
+                    <td>{item.reason}</td>
+                    <td>
+                      <Link to={`/appointmentD/${item._id}`}>
+                        <button className="btn btn-sm btn-primary me-2">
+                          Edit
+                        </button>
+                      </Link>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => deleteAppointment(item._id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </>
   );
 }
 
-export default Appointmentlist;
+export default AppointmentList;

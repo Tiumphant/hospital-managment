@@ -11,14 +11,17 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:8080/api/login", {
+      const response = await axios.post(`${API_BASE_URL}/api/login`, {
         email,
         password,
+        role,
       });
 
       const data = response.data;
@@ -27,7 +30,6 @@ function Login() {
 
       console.log("Login successful:", data);
 
-      // Navigate based on role
       if (data.role === "patient") {
         navigate("/patientdashboard");
       } else if (data.role === "doctor") {
@@ -48,7 +50,7 @@ function Login() {
   return (
     <div className="registration">
       <div className="left">
-        <h2 className="h2 text-center mb-4">Login</h2>
+        <h2 className="text-center mb-4">Login</h2>
         {error && <p className="text-danger text-center mb-3">{error}</p>}
         <form onSubmit={handleLogin}>
           <div className="mb-3">
@@ -59,6 +61,7 @@ function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              placeholder="Enter your email"
             />
           </div>
           <div className="mb-3">
@@ -69,6 +72,7 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              placeholder="Enter your password"
             />
           </div>
           <div className="mb-3">

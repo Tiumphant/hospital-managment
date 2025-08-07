@@ -5,7 +5,7 @@ import Dashboard from "./Dashboard";
 
 function RolelistK() {
   const [roles, setRoles] = useState([]);
-  const urlapi = "http://localhost:8080/api/role";
+  const urlapi = `${process.env.REACT_APP_API_URL}/api/role`;
 
   useEffect(() => {
     fetchRoles();

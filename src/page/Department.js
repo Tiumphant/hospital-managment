@@ -10,14 +10,16 @@ function Department() {
   const [head_doctor_id, setHead_Doctor_Id] = useState("");
   const [doctors, setDoctors] = useState([]);
 
-  const api = "http://localhost:8080/api/department";
-  const doctorApi = "http://localhost:8080/api/role";
+  const BASE_URL = process.env.REACT_APP_API_URL;
+  const api = `${BASE_URL}/api/department`;
+  const doctorApi = `${BASE_URL}/api/role`;
+
   const { id } = useParams();
   const navigate = useNavigate();
 
   const Doctorfetch = async () => {
     try {
-      let result = await axios.get(doctorApi);
+      const result = await axios.get(doctorApi);
       setDoctors(result.data);
     } catch (error) {
       console.error("Fetching error", error);
@@ -30,6 +32,7 @@ function Department() {
       getOne();
     }
   }, [id]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -38,20 +41,16 @@ function Department() {
         description,
         head_doctor_id,
       });
-      console.log("form submitted successfuly", response.data);
+      console.log("Form submitted successfully", response.data);
       navigate("/departmentlist");
     } catch (error) {
-      console.error("fetching error", error);
+      console.error("Submission error", error);
     }
   };
-  const editData = async (e) => {
-    e.preventDefault();
-    if (!id) {
-      console.error("Edit failed: No ID found");
-      return;
-    }
+
+  const editData = async () => {
     try {
-      let response = await axios.put(`${api}/${id}`, {
+      const response = await axios.put(`${api}/${id}`, {
         name,
         description,
         head_doctor_id: head_doctor_id || null,
@@ -59,37 +58,30 @@ function Department() {
       console.log("Successfully edited data", response.data);
       navigate("/departmentlist");
     } catch (error) {
-      console.error("Error in edit API", error);
+      console.error("Edit error", error);
     }
   };
+
   const getOne = async () => {
     try {
-      console.log("Fetching data from:", `${api}/${id}`);
-      let response = await axios.get(`${api}/${id}`);
-      console.log("Response data:", response.data);
-
+      const response = await axios.get(`${api}/${id}`);
       if (response.data) {
         setName(response.data.name);
         setDescription(response.data.description);
         setHead_Doctor_Id(response.data.head_doctor_id?._id || "");
-      } else {
-        console.log("No data returned from API");
       }
     } catch (error) {
-      console.log(
-        "Error in fetching department:",
-        error.response?.data || error.message
-      );
+      console.error("Get error:", error.response?.data || error.message);
     }
   };
 
   const deleteData = async () => {
     try {
       await axios.delete(`${api}/${id}`);
-      console.log("Data successfully deleted");
+      console.log("Data deleted successfully");
       navigate("/departmentlist");
     } catch (error) {
-      console.error("Error deleting data", error);
+      console.error("Delete error", error);
     }
   };
 
@@ -104,7 +96,7 @@ function Department() {
               <input
                 type="text"
                 className="form-control"
-                placeholder="department name"
+                placeholder="Department name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -114,7 +106,7 @@ function Department() {
               <input
                 type="text"
                 className="form-control"
-                placeholder="description"
+                placeholder="Description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
@@ -137,7 +129,6 @@ function Department() {
             <div className="d-flex justify-content-between">
               <button
                 type="submit"
-                onSubmit={(e) => handleSubmit(e)}
                 className="btn btn-success btn-lg animate-button"
               >
                 Submit
@@ -167,4 +158,5 @@ function Department() {
     </>
   );
 }
+
 export default Department;

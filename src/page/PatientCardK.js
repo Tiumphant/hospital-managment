@@ -2,6 +2,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Dashboard from "./Dashboard";
+
+const BASE_URL = process.env.REACT_APP_API_URL;
+
 function PatientCardK() {
   const [viewPatient, setViewPatient] = useState(null);
   const { id } = useParams();
@@ -11,14 +14,15 @@ function PatientCardK() {
       getOnePatient();
     }
   }, [id]);
+
   const getOnePatient = async () => {
     try {
-      const res = await axios.get(`http://localhost:8080/api/patient/${id}`);
+      const res = await axios.get(`${BASE_URL}/api/patient/${id}`);
       const data = res.data;
       console.log("Fetch Patient", data);
 
       setViewPatient({
-        image: `http://localhost:8000/upload/${data.image}`,
+        image: `${BASE_URL}/upload/${data.image}`,
         name: data.name,
         email: data.email,
         number: data.number,
@@ -31,6 +35,7 @@ function PatientCardK() {
       console.log("error in get one ", err);
     }
   };
+
   if (!viewPatient) {
     return <div>Loading Patient Details.....</div>;
   }
@@ -67,4 +72,5 @@ function PatientCardK() {
     </>
   );
 }
+
 export default PatientCardK;

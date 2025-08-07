@@ -1,59 +1,73 @@
-import axios from 'axios'
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import DoctorDashboard from './DoctorDashboard'
-function Departmentlist(){
-    const[data, setData] = useState([])
+import axios from "axios";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import DoctorDashboard from "./DoctorDashboard";
 
-    useEffect(()=>{
-      axios.get("http://localhost:8000/api/department").then((response)=>{
-        setData(response.data)
-        console.log("fetch get data", response.data)
+function Departmentlist() {
+  const [data, setData] = useState([]);
+
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/department`)
+      .then((response) => {
+        setData(response.data);
+        console.log("Fetched data:", response.data);
       })
-      .catch((err)=>{
-       console.log(err)
+      .catch((err) => {
+        console.error("Error fetching data:", err);
+      });
+  }, [API_URL]);
+
+  function Departmentdelete(id) {
+    axios
+      .delete(`${API_URL}/department/${id}`)
+      .then((response) => {
+        console.log("Data successfully deleted:", response.data);
+        setData((prevData) => prevData.filter((user) => user._id !== id));
       })
-    }, [])
-    function Departmentdelete(id){
-        axios.delete(`http://localhost:8000/api/department/${id}`).then((response)=>{
-            console.log("data succesfully deleted", response.data)
-            setData(data.filter(user => user._id !=id))
-        })
-        .catch((err)=>{
-            console.log("error in fetching data", err)
-        })
-    }
-    return(
-     <>
-    < DoctorDashboard/>
-     <h1 className='text-center primary'>List of Table</h1>
-     <table className="table table-bordered shadow">
-       <thead>
-     <tr>
-     <th>Name</th>
-     <th>description</th> 
-     <th>head_doctor_name</th>
-     <th>operation</th>
-     </tr>
-</thead>
-<tbody>
-      {data.map((item)=>(
-     <tr key={item._id}>
-          <td>{item.name}</td>
-          <td>{item.description}</td>
-          <td>{item.head_doctor_id?.name ||"not assign"}</td>
-          <td>
-           <button><Link to={`/department/${item._id}`}>Edit</Link></button>
-        <button onClick={(()=> Departmentdelete(item._id))}>Delete</button>
-          </td>
+      .catch((err) => {
+        console.error("Error deleting data:", err);
+      });
+  }
 
-     </tr>
-
-
-      ) )}
-</tbody>
-     </table> 
-     </>
-    )
+  return (
+    <>
+      <DoctorDashboard />
+      <h1 className="text-center primary">List of Departments</h1>
+      <table className="table table-bordered shadow">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Head Doctor</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item) => (
+            <tr key={item._id}>
+              <td>{item.name}</td>
+              <td>{item.description}</td>
+              <td>{item.head_doctor_id?.name || "Not Assigned"}</td>
+              <td>
+                <Link to={`/department/${item._id}`}>
+                  <button className="btn btn-primary mx-2">Edit</button>
+                </Link>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => Departmentdelete(item._id)}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  );
 }
-export default Departmentlist
+
+export default Departmentlist;
