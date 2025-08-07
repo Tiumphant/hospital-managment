@@ -11,18 +11,19 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
-
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/login`, {
-        email,
-        password,
-        role,
-      });
+      const response = await axios.post(
+        `https://backend-hospital-managment.vercel.app/api/login`,
+        {
+          email,
+          password,
+          role,
+        }
+      );
 
       const data = response.data;
       localStorage.setItem("token", JSON.stringify(data));
