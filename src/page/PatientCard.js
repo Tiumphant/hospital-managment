@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import DoctorDashboard from './DoctorDashboard';
+import axios from "axios";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import DoctorDashboard from "./DoctorDashboard";
 
 export default function PatientCard() {
   const [viewPatient, setViewPatient] = useState(null);
@@ -15,10 +15,12 @@ export default function PatientCard() {
 
   const getOnePatient = async (patientId) => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/patient/${patientId}`);
+      const res = await axios.get(
+        `http://localhost:8080/api/patient/${patientId}`
+      );
       const data = res.data;
 
-      console.log('Fetched Patient:', data);
+      console.log("Fetched Patient:", data);
 
       setViewPatient({
         image: `http://localhost:8000/upload/${data.image}`,
@@ -31,7 +33,7 @@ export default function PatientCard() {
         assignedDoctor: data.assignedDoctor,
       });
     } catch (err) {
-      console.error('Error fetching patient data:', err);
+      console.error("Error fetching patient data:", err);
     }
   };
 
@@ -43,16 +45,19 @@ export default function PatientCard() {
     <>
       <DoctorDashboard />
       <div className="cover">
-        <div className="card" style={{ display: 'flex', flexDirection: 'row', margin: '20px' }}>
-          <div style={{ width: '40%' }}>
+        <div
+          className="card"
+          style={{ display: "flex", flexDirection: "row", margin: "20px" }}
+        >
+          <div style={{ width: "40%" }}>
             <img
               src={viewPatient.image}
               alt={viewPatient.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
               className="rounded-start"
             />
           </div>
-          <div className="card-body" style={{ width: '60%' }}>
+          <div className="card-body" style={{ width: "60%" }}>
             <p className="card-title">Name: {viewPatient.name}</p>
             <p className="card-text">Age: {viewPatient.age}</p>
             <p className="card-text">Gender: {viewPatient.gender}</p>

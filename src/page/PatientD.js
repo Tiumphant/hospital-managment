@@ -17,8 +17,8 @@ function PatientD() {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  const api = "http://localhost:8000/api/patient";
-  const doctorApi = "http://localhost:8000/api/role";
+  const api = "http://localhost:8080/api/patient";
+  const doctorApi = "http://localhost:8080/api/role";
 
   let { id } = useParams();
   const navigate = useNavigate();
@@ -116,8 +116,8 @@ function PatientD() {
         setGender(data.gender?.toLowerCase() || "");
         setAddress(data.address || "");
         setAssignedDoctor(data.assignedDoctor?._id || "");
-                if (data.imageUrl) {
-          setPreview(data.imageUrl); 
+        if (data.imageUrl) {
+          setPreview(data.imageUrl);
         }
       }
     } catch (error) {
@@ -133,19 +133,51 @@ function PatientD() {
           <h2 className="text-center text-primary">Patient Registration</h2>
           <form onSubmit={id ? editData : handleSubmit} className="mt-4">
             <div className="mb-3">
-              <input type="text" className="form-control" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
             </div>
             <div className="mb-3">
-              <input type="email" className="form-control" placeholder="Email (Optional)" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input
+                type="email"
+                className="form-control"
+                placeholder="Email (Optional)"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
             <div className="mb-3">
-              <input type="text" className="form-control" placeholder="Phone Number" value={number} onChange={(e) => setNumber(e.target.value)} required />
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Phone Number"
+                value={number}
+                onChange={(e) => setNumber(e.target.value)}
+                required
+              />
             </div>
             <div className="mb-3">
-              <input type="number" className="form-control" placeholder="Age" value={age} onChange={(e) => setAge(e.target.value)} required />
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Age"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                required
+              />
             </div>
             <div className="mb-3">
-              <select className="form-control" value={gender} onChange={(e) => setGender(e.target.value)} required>
+              <select
+                className="form-control"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                required
+              >
                 <option value="">Select Gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -153,30 +185,58 @@ function PatientD() {
               </select>
             </div>
             <div className="mb-3">
-              <input type="text" className="form-control" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} required />
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
+              />
             </div>
             <div className="mb-3">
-              <select className="form-control" value={assignedDoctor} onChange={(e) => setAssignedDoctor(e.target.value)}>
+              <select
+                className="form-control"
+                value={assignedDoctor}
+                onChange={(e) => setAssignedDoctor(e.target.value)}
+              >
                 <option value="">Select Assigned Doctor</option>
                 {doctors.map((doctor) => (
-                  <option key={doctor._id} value={doctor._id}>{doctor.name}</option>
+                  <option key={doctor._id} value={doctor._id}>
+                    {doctor.name}
+                  </option>
                 ))}
               </select>
             </div>
             <div className="mb-3">
-              <input type="file" className="form-control" onChange={handleImageChange} />
+              <input
+                type="file"
+                className="form-control"
+                onChange={handleImageChange}
+              />
               {preview && (
                 <div className="mt-2">
-                  <img src={preview} alt="Preview" style={{ maxHeight: "150px" }} />
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    style={{ maxHeight: "150px" }}
+                  />
                 </div>
               )}
             </div>
             <div className="d-flex justify-content-between">
-              <button type="submit" className="btn btn-success btn-lg animate-button">
+              <button
+                type="submit"
+                className="btn btn-success btn-lg animate-button"
+              >
                 {id ? "Update" : "Submit"}
               </button>
               {id && (
-                <button type="button" onClick={deleteData} className="btn btn-danger btn-lg animate-button">
+                <button
+                  type="button"
+                  onClick={deleteData}
+                  className="btn btn-danger btn-lg animate-button"
+                >
                   Delete
                 </button>
               )}

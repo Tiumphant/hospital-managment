@@ -14,11 +14,11 @@ import Emergency from "../page/Emergency.jpeg";
 import "./home.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { motion } from "framer-motion";
-import PatientDashboard from "./PatientDashboard";
-function Home() {
+import DoctorDashboard from "./DoctorDashboard";
+function HomeDoctor() {
   return (
     <>
-      <PatientDashboard />
+      <DoctorDashboard />
       <section className="hero">
         <div className="container d-flex align-items-center justify-content-between py-5">
           <motion.div
@@ -123,8 +123,6 @@ function Home() {
           </Link>
         </div>
       </section>
-
-      {/* Contact Section */}
       <section className="contact py-5 bg-dark text-light">
         <div className="container text-center">
           <h2 className="fw-bold mb-4">Contact Us</h2>
@@ -137,4 +135,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default HomeDoctor;

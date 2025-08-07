@@ -11,7 +11,7 @@ function PatientA() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("http://localhost:8000/api/patient");
+        const response = await axios.get("http://localhost:8080/api/patient");
         setData(response.data); // Correct way to get data from axios response
       } catch (error) {
         console.error("Error fetching data:", error);

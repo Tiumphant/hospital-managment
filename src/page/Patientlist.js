@@ -11,10 +11,10 @@ function Patientlist() {
 
   const update = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/patient");
+      const response = await axios.get("http://localhost:8080/api/patient");
       if (Array.isArray(response.data)) {
         setData(response.data);
-        setFilteredData(response.data); 
+        setFilteredData(response.data);
       } else {
         setData([]);
         setFilteredData([]);
@@ -32,10 +32,11 @@ function Patientlist() {
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
-    const filtered = data.filter((item) =>
-      item.name.toLowerCase().includes(value) ||
-      item.email.toLowerCase().includes(value) ||
-      item.number.toString().includes(value)
+    const filtered = data.filter(
+      (item) =>
+        item.name.toLowerCase().includes(value) ||
+        item.email.toLowerCase().includes(value) ||
+        item.number.toString().includes(value)
     );
     setFilteredData(filtered);
   };
@@ -101,7 +102,7 @@ function Patientlist() {
                 </button>
               </td>
               <td>
-              <Link to={`/patientCard/${item._id}`}>View</Link>
+                <Link to={`/patientCard/${item._id}`}>View</Link>
               </td>
             </tr>
           ))}
@@ -112,5 +113,3 @@ function Patientlist() {
 }
 
 export default Patientlist;
-
-

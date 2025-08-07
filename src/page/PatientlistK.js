@@ -9,11 +9,9 @@ function PatientlistK() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
 
-  // Fetch patient data
-  const update = async () => {
+  const fetchPatients = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/patient");
-      console.log("Fetched data:", response.data);
+      const response = await axios.get("http://localhost:8080/api/patient");
       setData(response.data);
       setFilteredData(response.data);
     } catch (error) {
@@ -22,53 +20,49 @@ function PatientlistK() {
   };
 
   useEffect(() => {
-    update();
+    fetchPatients();
   }, []);
 
-  // Search filter
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
-    const filtered = data.filter((item) =>
-      item.name.toLowerCase().includes(value) ||
-      item.email.toLowerCase().includes(value) ||
-      item.number.toString().includes(value)
+    const filtered = data.filter(
+      (item) =>
+        item.name?.toLowerCase().includes(value) ||
+        item.email?.toLowerCase().includes(value) ||
+        item.number?.toString().includes(value)
     );
     setFilteredData(filtered);
   };
 
-  // Delete function
-  const delData = async (id) => {
+  const handleDelete = async (id) => {
     try {
-      console.log("Deleting patient with ID:", id);
-      await axios.delete(`http://localhost:8000/api/patient/${id}`);
-      
-      alert("Patient deleted successfully");
-      
-      // Update the state after deletion
-      setData((prevData) => prevData.filter((item) => item._id !== id));
-      setFilteredData((prevData) => prevData.filter((item) => item._id !== id));
+      await axios.delete(`http://localhost:8080/api/patient/${id}`);
+      alert("Patient deleted successfully.");
+      const newData = data.filter((item) => item._id !== id);
+      setData(newData);
+      setFilteredData(newData);
     } catch (error) {
-      console.error("Error deleting user:", error.response?.data || error.message);
-      alert("Error deleting user: " + (error.response?.data?.message ));
+      console.error("Error deleting patient:", error);
+      alert("Error deleting patient.");
     }
   };
-  
+
   return (
     <>
-      <Dashboard/>
+      <Dashboard />
       <h1 className="text-center">List Of Patients</h1>
-      <div>
-        Search:
+
+      <div className="search-container">
         <input
           type="text"
           value={searchTerm}
           onChange={handleSearch}
-          placeholder="Type to search"
+          placeholder="Search by name, email, or number"
         />
       </div>
 
-      <table className="table table-bordered shadow">
+      <table className="table table-bordered shadow mt-3">
         <thead>
           <tr>
             <th>Name</th>
@@ -78,32 +72,46 @@ function PatientlistK() {
             <th>Gender</th>
             <th>Address</th>
             <th>Assigned Doctor</th>
-            <th>Operation</th>
-            <th>Image</th>
+            <th>Actions</th>
+            <th>Card</th>
           </tr>
         </thead>
         <tbody>
-          {filteredData.map((item) => (
-            <tr key={item._id}>
-              <td>{item.name}</td>
-              <td>{item.email}</td>
-              <td>{item.number}</td>
-              <td>{item.age}</td>
-              <td>{item.gender}</td>
-              <td>{item.address}</td>
-              <td>{item.assignedDoctor?.name || "Not Assigned"}</td>
-
-              <td>
-                <button>
-                  <Link to={`/PatientC/${item._id}`}>Edit</Link>
-                </button>
-                <button onClick={() => delData(item._id)}>Delete</button>
-              </td>
-              <td>
-                <Link to={`/PatientCardK/${item._id}`}>View</Link>
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <tr key={item._id}>
+                <td>{item.name}</td>
+                <td>{item.email}</td>
+                <td>{item.number}</td>
+                <td>{item.age}</td>
+                <td>{item.gender}</td>
+                <td>{item.address}</td>
+                <td>{item.assignedDoctor?.name || "Not Assigned"}</td>
+                <td>
+                  <Link to={`/PatientC/${item._id}`}>
+                    <button className="btn btn-warning btn-sm">Edit</button>
+                  </Link>{" "}
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDelete(item._id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+                <td>
+                  <Link to={`/PatientCardK/${item._id}`}>
+                    <button className="btn btn-info btn-sm">View</button>
+                  </Link>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="9" className="text-center">
+                No patients found.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </>

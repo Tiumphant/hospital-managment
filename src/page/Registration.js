@@ -12,24 +12,23 @@ function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
   const [isEmpty, setIsEmpty] = useState(false);
 
-  
   const [formData, setFormData] = useState({
     role: "patient",
     details: {},
   });
 
   const navigate = useNavigate();
-  const api = "http://localhost:8000/api/registration";
-  const id = useParams()
+  const api = "http://localhost:8080/api/registration";
+  const id = useParams();
   const handleSubmit = async (e) => {
     e.preventDefault();
-   setError("");
-  
+    setError("");
+
     setIsEmpty(true);
-  
+
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -40,8 +39,8 @@ function Registration() {
       postData();
     }
   };
-  
-    const postData = async (e) => { 
+
+  const postData = async (e) => {
     try {
       const response = await axios.post(api, {
         firstName,
@@ -61,24 +60,28 @@ function Registration() {
       setError(err.response?.data?.message || "Registration failed.");
     }
   };
- const putData = async(e)=>{
-  e.preventDefault();
+  const putData = async (e) => {
+    e.preventDefault();
     try {
       const response = await axios.put(`${api}/${id}`, {
-        firstName,lastName,age, gender,contactNumber,
+        firstName,
+        lastName,
+        age,
+        gender,
+        contactNumber,
         email,
         password,
         role: formData.role,
-        details: formData.details, 
+        details: formData.details,
       });
 
-      console.log( response.data);
+      console.log(response.data);
       navigate("/login");
     } catch (error) {
       console.log("Error updating:", error);
     }
   };
- 
+
   const handleChange = (e) => {
     setFormData({ ...formData, role: e.target.value });
   };
@@ -88,33 +91,32 @@ function Registration() {
       ...formData,
       details: { ...formData.details, [e.target.name]: e.target.value },
     });
-  }
+  };
 
   return (
     <div className="registration">
-      <div className="left">
-        <h2 className="h2">Registration Form</h2>
-   
-        <form onSubmit={handleSubmit} className="mt-4 form registration container mt-2 justify-center">
-         {error && <p className="text-danger text-center">{error}</p>}
+      <div className="card">
+        <h2>Registration Form</h2>
 
+        {error && <p className="text-danger text-center">{error}</p>}
+
+        <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <input
               type="text"
               className="form-control"
-              placeholder="Enter First Name"
+              placeholder="First Name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
             />
-            {/* {isEmpty && !firstName &&(<span style={{color: "red", textAlign: "center" }}>Should not be empty</span>)} */}
           </div>
 
           <div className="mb-3">
             <input
               type="text"
               className="form-control"
-              placeholder="Enter Last Name"
+              placeholder="Last Name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required
@@ -136,7 +138,7 @@ function Registration() {
             <input
               type="text"
               className="form-control"
-              placeholder="Phone Number (10 digits)"
+              placeholder="Phone Number"
               value={contactNumber}
               onChange={(e) => setContactNumber(e.target.value)}
               required
@@ -155,14 +157,17 @@ function Registration() {
           </div>
 
           <div className="mb-3">
-            <select className="form-control" value={gender} onChange={(e) => setGender(e.target.value)} required>
+            <select
+              className="form-control"
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              required
+            >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
-            {isEmpty && !gender && ( <span style={{ color: "red", textAlign: "center" }}>select gender</span>
-            )}
           </div>
 
           <div className="mb-3">
@@ -186,37 +191,32 @@ function Registration() {
               required
             />
           </div>
-<<<<<<< HEAD
-=======
 
-          {/* Role Selection */}
->>>>>>> 72d5d6d07f6484befc4275ff7903ef497da8b2e7
           <div className="mb-3">
             <label>Select Role:</label>
-            <select name="role" value={formData.role} onChange={handleChange} className="form-control">
+            <select
+              className="form-control"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+            >
               <option value="patient">Patient</option>
               <option value="doctor">Doctor</option>
               <option value="admin">Admin</option>
             </select>
           </div>
 
-<<<<<<< HEAD
-=======
-          {/* Dynamic Form Fields Based on Role */}
->>>>>>> 72d5d6d07f6484befc4275ff7903ef497da8b2e7
           {formData.role === "patient" && (
-            <>
-              <div className="mb-3">
-                <label>Diagnosis:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="diagnosis"
-                  placeholder="Enter Diagnosis"
-                  onChange={handleDetailsChange}
-                />
-              </div>
-            </>
+            <div className="mb-3">
+              <label>Diagnosis:</label>
+              <input
+                type="text"
+                className="form-control"
+                name="diagnosis"
+                placeholder="Enter Diagnosis"
+                onChange={handleDetailsChange}
+              />
+            </div>
           )}
 
           {formData.role === "doctor" && (
@@ -245,18 +245,16 @@ function Registration() {
           )}
 
           {formData.role === "admin" && (
-            <>
-              <div className="mb-3">
-                <label>Unique Identity:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="uniqueIdentity"
-                  placeholder="Enter Unique Identity"
-                  onChange={handleDetailsChange}
-                />
-              </div>
-            </>
+            <div className="mb-3">
+              <label>Unique Identity:</label>
+              <input
+                type="text"
+                className="form-control"
+                name="uniqueIdentity"
+                placeholder="Enter Unique Identity"
+                onChange={handleDetailsChange}
+              />
+            </div>
           )}
 
           <button type="submit" className="btn btn-primary w-100">
@@ -270,6 +268,5 @@ function Registration() {
       </div>
     </div>
   );
-
-  }
+}
 export default Registration;

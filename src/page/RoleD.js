@@ -1,21 +1,20 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import DoctorDashboard from "./DoctorDashboard"
+import DoctorDashboard from "./DoctorDashboard";
 function RoleD() {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
 
-  
   const update = async () => {
     try {
-      let api = await axios.get("http://localhost:8000/api/role");
-      let result = api.data; 
+      let api = await axios.get("http://localhost:8080/api/role");
+      let result = api.data;
       console.log("Fetched API successfully:", result);
-      
+
       setData(result);
-      setFilteredData(result); 
+      setFilteredData(result);
     } catch (err) {
       console.log("Error in fetching:", err);
     }
@@ -25,16 +24,15 @@ function RoleD() {
     update();
   }, []);
 
-  
-//   const delData = async (id) => {
-//     try {
-//       await axios.delete(`http://localhost:8000/api/role/${id}`);
-//       setData((p) => p.filter((item) => item._id !== id));
-//       setFilteredData((p) => p.filter((item) => item._id !== id));
-//     } catch (error) {
-//       console.error("Error deleting role:", error);
-//     }
-//   };
+  //   const delData = async (id) => {
+  //     try {
+  //       await axios.delete(`http://localhost:8000/api/role/${id}`);
+  //       setData((p) => p.filter((item) => item._id !== id));
+  //       setFilteredData((p) => p.filter((item) => item._id !== id));
+  //     } catch (error) {
+  //       console.error("Error deleting role:", error);
+  //     }
+  //   };
 
   useEffect(() => {
     if (!searchTerm) {
@@ -50,10 +48,9 @@ function RoleD() {
 
   return (
     <div>
-        <DoctorDashboard/>
+      <DoctorDashboard />
       <h1 className="text-center">Role List</h1>
 
-      
       <input
         type="text"
         placeholder="Search role..."

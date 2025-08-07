@@ -2,22 +2,22 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Dashboard from "./Dashboard";
-function PatientCardK(){
-    const [viewPatient, setViewPatient] =useState(null)
-    const { id } = useParams()
+function PatientCardK() {
+  const [viewPatient, setViewPatient] = useState(null);
+  const { id } = useParams();
 
-  useEffect(()=>{
-    if(id){
-        getOnePatient()
+  useEffect(() => {
+    if (id) {
+      getOnePatient();
     }
-  }, [id]) 
- const getOnePatient = async()=>{
- try{
-    const res = await axios.get(`http://localhost:8000/api/patient/${id}`)
-    const data = res.data ;
-    console.log("Fetch Patient", data)
+  }, [id]);
+  const getOnePatient = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8080/api/patient/${id}`);
+      const data = res.data;
+      console.log("Fetch Patient", data);
 
-    setViewPatient({
+      setViewPatient({
         image: `http://localhost:8000/upload/${data.image}`,
         name: data.name,
         email: data.email,
@@ -26,31 +26,32 @@ function PatientCardK(){
         gender: data.gender,
         address: data.address,
         assignedDoctor: data.assignedDoctor,
-    })
+      });
+    } catch (err) {
+      console.log("error in get one ", err);
+    }
+  };
+  if (!viewPatient) {
+    return <div>Loading Patient Details.....</div>;
+  }
 
- }catch(err){
-    console.log("error in get one ", err)
-   
- }
-}
-if(!viewPatient){
-    return <div>Loading Patient Details.....</div>
-}
-
-  return(
+  return (
     <>
       <Dashboard />
       <div className="cover">
-        <div className="card" style={{ display: 'flex', flexDirection: 'row', margin: '20px' }}>
-          <div style={{ width: '40%' }}>
+        <div
+          className="card"
+          style={{ display: "flex", flexDirection: "row", margin: "20px" }}
+        >
+          <div style={{ width: "40%" }}>
             <img
               src={viewPatient.image}
               alt={viewPatient.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
               className="rounded-start"
             />
           </div>
-          <div className="card-body" style={{ width: '60%' }}>
+          <div className="card-body" style={{ width: "60%" }}>
             <p className="card-title">Name: {viewPatient.name}</p>
             <p className="card-text">Age: {viewPatient.age}</p>
             <p className="card-text">Gender: {viewPatient.gender}</p>
@@ -64,7 +65,6 @@ if(!viewPatient){
         </div>
       </div>
     </>
-  )
-
+  );
 }
-export default PatientCardK
+export default PatientCardK;

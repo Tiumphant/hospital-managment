@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import PatientDashboard from "./PatientDashboard";
 
@@ -7,7 +7,7 @@ function Role() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isEmpty, setIsEmpty] = useState(false);
-  const urlapi = "http://localhost:8000/api/role";
+  const urlapi = "http://localhost:8080/api/role";
   const { id } = useParams();
 
   useEffect(() => {
@@ -24,7 +24,10 @@ function Role() {
         setDescription(response.data.description);
       }
     } catch (error) {
-      console.error("Error fetching role:", error.response?.data || error.message);
+      console.error(
+        "Error fetching role:",
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -33,7 +36,7 @@ function Role() {
     setIsEmpty(true);
 
     if (!name || !description) {
-      return; 
+      return;
     }
 
     try {
@@ -42,7 +45,6 @@ function Role() {
       } else {
         await createRole();
       }
-    
     } catch (err) {
       console.error("Error submitting form:", err);
     }
@@ -55,37 +57,56 @@ function Role() {
         console.log("Role created successfully:", response.data);
       }
     } catch (error) {
-      console.error("Error creating role:", error.response?.data || error.message);
+      console.error(
+        "Error creating role:",
+        error.response?.data || error.message
+      );
     }
   };
 
   const updateRole = async (id) => {
     try {
-      const response = await axios.put(`${urlapi}/${id}`, { name, description });
+      const response = await axios.put(`${urlapi}/${id}`, {
+        name,
+        description,
+      });
       if (response.status === 200) {
         console.log("Role updated successfully:", response.data);
       }
     } catch (error) {
-      console.error("Error updating role:", error.response?.data || error.message);
+      console.error(
+        "Error updating role:",
+        error.response?.data || error.message
+      );
     }
   };
 
   return (
     <div>
-      <PatientDashboard/>
+      <PatientDashboard />
       <form onSubmit={handleSubmit}>
         <label>
           <input
-            type="text"value={name} placeholder="Name"onChange={(event) => setName(event.target.value)}
+            type="text"
+            value={name}
+            placeholder="Name"
+            onChange={(event) => setName(event.target.value)}
           />
-          {isEmpty && !name && <span style={{ color: "red" }}>Must not be empty</span>}
+          {isEmpty && !name && (
+            <span style={{ color: "red" }}>Must not be empty</span>
+          )}
         </label>
         <br />
         <label>
           <input
-            type="text"  value={description} placeholder="Description"onChange={(event) => setDescription(event.target.value)}
+            type="text"
+            value={description}
+            placeholder="Description"
+            onChange={(event) => setDescription(event.target.value)}
           />
-          {isEmpty && !description && <span style={{ color: "red" }}>Must not be empty</span>}
+          {isEmpty && !description && (
+            <span style={{ color: "red" }}>Must not be empty</span>
+          )}
         </label>
         <br />
         <button type="submit">{id ? "Update" : "Submit"}</button>

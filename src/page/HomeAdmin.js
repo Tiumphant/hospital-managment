@@ -1,5 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { motion } from "framer-motion";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./home.css";
+
 import doctorImage from "../page/doctor.jpg";
 import neurology from "../page/neurology.jpeg";
 import cardiology from "../page/cardiology.jpg";
@@ -11,14 +16,72 @@ import labmanagment from "../page/labmanagment.jpeg";
 import pharmecymanagment from "../page/pharmecymanagment.jpg";
 import Pediatrics from "../page/Pediatrics.jpg";
 import Emergency from "../page/Emergency.jpeg";
-import "./home.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { motion } from "framer-motion";
-import PatientDashboard from "./PatientDashboard";
-function Home() {
+
+import Dashboard from "./Dashboard";
+
+function HomeAdmin() {
+  const [summary, setSummary] = useState({
+    totalAppointments: 0,
+    totalDoctors: 0,
+  });
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/summary");
+        setSummary(response.data);
+      } catch (error) {
+        console.error("Error fetching summary:", error);
+      }
+    };
+
+    fetchCounts();
+  }, []);
+
+  const departments = [
+    { name: "🧠 Neurology", img: neurology },
+    { name: "❤️ Cardiology", img: cardiology },
+    { name: "🦴 Orthopedics", img: orthopadic },
+    { name: "🧑‍⚕️ Pediatrics", img: Pediatrics },
+    { name: "👩‍⚕️ Gynecology", img: Gynecology },
+    { name: "🏥 Emergency & Trauma", img: Emergency },
+  ];
+
   return (
     <>
-      <PatientDashboard />
+      <Dashboard />
+
+      <section className="stats-section py-5 bg-white text-center">
+        <div className="container">
+          <motion.h2
+            className="fw-bold mb-4"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            Dashboard Overview
+          </motion.h2>
+          <div className="row justify-content-center">
+            <div className="col-md-4 mb-3">
+              <div className="p-4 bg-light rounded shadow-sm">
+                <h4>Total Appointments</h4>
+                <p className="display-5 text-primary fw-bold">
+                  {summary.totalAppointments}
+                </p>
+              </div>
+            </div>
+            <div className="col-md-4 mb-3">
+              <div className="p-4 bg-light rounded shadow-sm">
+                <h4>Total Doctors</h4>
+                <p className="display-5 text-success fw-bold">
+                  {summary.totalDoctors}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="hero">
         <div className="container d-flex align-items-center justify-content-between py-5">
           <motion.div
@@ -39,6 +102,7 @@ function Home() {
               </button>
             </Link>
           </motion.div>
+
           <motion.div
             className="image-container"
             initial={{ opacity: 0, scale: 0.8 }}
@@ -53,6 +117,7 @@ function Home() {
           </motion.div>
         </div>
       </section>
+
       <section className="departments py-5 bg-light">
         <div className="container">
           <motion.h2
@@ -66,14 +131,7 @@ function Home() {
           </motion.h2>
 
           <div className="row row-cols-1 row-cols-md-3 g-4">
-            {[
-              { name: "🧠 Neurology", img: neurology },
-              { name: "❤️ Cardiology", img: cardiology },
-              { name: "🦴 Orthopedics", img: orthopadic },
-              { name: "🧑‍⚕️ Pediatrics", img: Pediatrics },
-              { name: "👩‍⚕️ Gynecology", img: Gynecology },
-              { name: "🏥 Emergency & Trauma", img: Emergency },
-            ].map((dept, idx) => (
+            {departments.map((dept, idx) => (
               <motion.div
                 key={idx}
                 className="col"
@@ -124,7 +182,6 @@ function Home() {
         </div>
       </section>
 
-      {/* Contact Section */}
       <section className="contact py-5 bg-dark text-light">
         <div className="container text-center">
           <h2 className="fw-bold mb-4">Contact Us</h2>
@@ -137,4 +194,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default HomeAdmin;

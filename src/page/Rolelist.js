@@ -10,21 +10,22 @@ function Rolelist() {
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
-    const filtered = data.filter((item) =>
-      item.name.toLowerCase().includes(value) ||
-      item.email.toLowerCase().includes(value) ||
-      item.number.toString().includes(value)
+    const filtered = data.filter(
+      (item) =>
+        item.name.toLowerCase().includes(value) ||
+        item.email.toLowerCase().includes(value) ||
+        item.number.toString().includes(value)
     );
     setFilteredData(filtered);
   };
   const update = async () => {
     try {
-      let api = await axios.get("http://localhost:8000/api/role");
-      let result = api.data; 
+      let api = await axios.get("http://localhost:8080/api/role");
+      let result = api.data;
       console.log("Fetched API successfully:", result);
-      
+
       setData(result);
-      setFilteredData(result); 
+      setFilteredData(result);
     } catch (err) {
       console.log("Error in fetching:", err);
     }
@@ -34,7 +35,6 @@ function Rolelist() {
     update();
   }, []);
 
-  
   const delData = async (id) => {
     try {
       await axios.delete(`http://localhost:8000/api/role/${id}`);
@@ -61,7 +61,6 @@ function Rolelist() {
     <div>
       <h1 className="text-center">Role List</h1>
 
-      
       <div>
         Search:
         <input
@@ -85,10 +84,13 @@ function Rolelist() {
               <td>{item.name}</td>
               <td>{item.description}</td>
               <td>
-              <Link to={`/Role/${item._id}`}>
-                      <button>Edit</button>
-                    </Link>
-                <button onClick={() => delData(item._id)} className="btn btn-danger">
+                <Link to={`/Role/${item._id}`}>
+                  <button>Edit</button>
+                </Link>
+                <button
+                  onClick={() => delData(item._id)}
+                  className="btn btn-danger"
+                >
                   Delete
                 </button>
               </td>

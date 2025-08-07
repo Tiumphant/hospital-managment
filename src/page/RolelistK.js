@@ -1,92 +1,100 @@
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Dashboard from './Dashboard'
+import Dashboard from "./Dashboard";
 
 function RolelistK() {
-  const [data, setData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
-
-  
-  const update = async () => {
-    try {
-      let api = await axios.get("http://localhost:8000/api/role");
-      let result = api.data; 
-      console.log("Fetched API successfully:", result);
-      
-      setData(result);
-      setFilteredData(result); 
-    } catch (err) {
-      console.log("Error in fetching:", err);
-    }
-  };
+  const [roles, setRoles] = useState([]);
+  const urlapi = "http://localhost:8080/api/role";
 
   useEffect(() => {
-    update();
+    fetchRoles();
   }, []);
 
-  
-  const delData = async (id) => {
+  const fetchRoles = async () => {
     try {
-      await axios.delete(`http://localhost:8000/api/role/${id}`);
-      setData((p) => p.filter((item) => item._id !== id));
-      setFilteredData((p) => p.filter((item) => item._id !== id));
-    } catch (error) {
-      console.error("Error deleting role:", error);
+      const res = await axios.get(urlapi);
+      setRoles(res.data);
+    } catch (err) {
+      console.error("Error fetching roles:", err);
     }
   };
 
-  useEffect(() => {
-    if (!searchTerm) {
-      setFilteredData(data);
-    } else {
-      setFilteredData(
-        data.filter((item) =>
-          item.name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
+  const deleteRole = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this role?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`${urlapi}/${id}`);
+      alert("Role deleted successfully");
+      fetchRoles();
+    } catch (err) {
+      console.error("Error deleting role:", err);
+      alert("Failed to delete role");
     }
-  }, [searchTerm, data]);
+  };
 
   return (
-    <div>
-        <Dashboard/>
-      <h1 className="text-center">Role List</h1>
+    <div className="container-fluid">
+      {/* Top Navbar or Sidebar Dashboard */}
+      <Dashboard />
 
-      
-      <input
-        type="text"
-        placeholder="Search role..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="form-control mb-3"
-      />
-      <table className="table table-bordered shadow">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredData.map((item) => (
-            <tr key={item._id}>
-              <td>{item.name}</td>
-              <td>{item.description}</td>
-              <td>
-              <Link to={`/RoleC/${item._id}`}>
-                      <button>Edit</button>
-                    </Link>
-                <button onClick={() => delData(item._id)} className="btn btn-danger">
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {/* Main Content */}
+      <div className="container mt-4">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h2 className="text-primary">Manage Roles</h2>
+          <Link to="/roleC" className="btn btn-success">
+            + Add New Role
+          </Link>
+        </div>
+
+        <div className="card shadow-sm">
+          <div className="card-body">
+            <table className="table table-bordered table-hover">
+              <thead className="table-dark">
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th style={{ width: "150px" }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {roles.map((role) => (
+                  <tr key={role._id}>
+                    <td>{role.name}</td>
+                    <td>{role.description}</td>
+                    <td>
+                      <div className="d-flex gap-2">
+                        <Link
+                          to={`/roleC/${role._id}`}
+                          className="btn btn-sm btn-warning"
+                        >
+                          Edit
+                        </Link>
+                        <button
+                          onClick={() => deleteRole(role._id)}
+                          className="btn btn-sm btn-danger"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {roles.length === 0 && (
+                  <tr>
+                    <td colSpan="3" className="text-center text-muted">
+                      No roles found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
