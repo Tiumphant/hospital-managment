@@ -12,7 +12,7 @@ function PatientA() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/patient`
+          `https://backend-hospital-managment.vercel.app/api/patient`
         );
         setData(response.data);
       } catch (error) {

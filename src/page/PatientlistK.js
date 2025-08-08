@@ -12,7 +12,7 @@ function PatientlistK() {
   const fetchPatients = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/patient`
+        `https://backend-hospital-managment.vercel.app/api/patient`
       );
       setData(response.data);
       setFilteredData(response.data);
@@ -39,7 +39,9 @@ function PatientlistK() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/patient/${id}`);
+      await axios.delete(
+        `https://backend-hospital-managment.vercel.app/api/patient/${id}`
+      );
       alert("Patient deleted successfully.");
       const newData = data.filter((item) => item._id !== id);
       setData(newData);
@@ -75,7 +77,6 @@ function PatientlistK() {
             <th>Address</th>
             <th>Assigned Doctor</th>
             <th>Actions</th>
-            <th>Card</th>
           </tr>
         </thead>
         <tbody>
@@ -92,18 +93,13 @@ function PatientlistK() {
                 <td>
                   <Link to={`/PatientC/${item._id}`}>
                     <button className="btn btn-warning btn-sm">Edit</button>
-                  </Link>{" "}
+                  </Link>
                   <button
                     className="btn btn-danger btn-sm"
                     onClick={() => handleDelete(item._id)}
                   >
                     Delete
                   </button>
-                </td>
-                <td>
-                  <Link to={`/PatientCardK/${item._id}`}>
-                    <button className="btn btn-info btn-sm">View</button>
-                  </Link>
                 </td>
               </tr>
             ))
