@@ -1,3 +1,5 @@
+// src/components/AppointmentA.js
+
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -7,38 +9,34 @@ function AppointmentA() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const BASE_URL = process.env.REACT_APP_API_URL;
+  const BASE_URL = "https://backend-hospital-managment.vercel.app";
   const api = `${BASE_URL}/api/appointment`;
-  const doctorApi = `${BASE_URL}/api/role`;
-  const patientApi = `${BASE_URL}/api/patient`;
-  const departmentApi = `${BASE_URL}/api/department`;
 
   useEffect(() => {
-    axios
-      .get(api)
-      .then((res) => {
+    const fetchAppointments = async () => {
+      try {
+        const res = await axios.get(api);
         setAppointments(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error fetching appointments:", err);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchAppointments();
   }, []);
 
-  // Optional: delete functionality
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this appointment?"))
       return;
 
-    axios
-      .delete(`${api}/${id}`)
-      .then((res) => {
-        setAppointments((prev) => prev.filter((item) => item._id !== id));
-      })
-      .catch((err) => {
-        console.error("Error deleting appointment:", err);
-      });
+    try {
+      await axios.delete(`${api}/${id}`);
+      setAppointments((prev) => prev.filter((item) => item._id !== id));
+    } catch (err) {
+      console.error("Error deleting appointment:", err);
+    }
   };
 
   return (
@@ -77,12 +75,14 @@ function AppointmentA() {
                       <td>{item.doctor_id?.name || "Not Assigned"}</td>
                       <td>{item.department_id?.name || "Not Assigned"}</td>
                       <td>
-                        {new Date(item.appointment_date).toLocaleDateString()}
+                        {item.appointment_date
+                          ? new Date(item.appointment_date).toLocaleDateString()
+                          : "Not Set"}
                       </td>
                       <td>{item.status}</td>
                       <td>{item.reason}</td>
                       <td>
-                        <Link to={`/appointment/${item._id}`}>
+                        <Link to={`/editappointment/${item._id}`}>
                           <button className="btn btn-sm btn-primary me-2">
                             Edit
                           </button>

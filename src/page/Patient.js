@@ -14,25 +14,22 @@ function Patient() {
   const [address, setAddress] = useState("");
   const [assignedDoctor, setAssignedDoctor] = useState("");
   const [doctors, setDoctors] = useState([]);
-  const [file, setFile] = useState(null);
 
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const apiBase = process.env.REACT_APP_API_URL || "http://localhost:8080";
-  const patientApi = `${apiBase}/api/patient`;
-  const doctorApi = `${apiBase}/api/role`;
+  const patientApi =
+    "https://backend-hospital-managment.vercel.app/api/patient";
 
   useEffect(() => {
     fetchDoctors();
-    if (id) {
-      fetchPatient();
-    }
+    if (id) fetchPatient();
   }, [id]);
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get(doctorApi);
+      const response = await axios.get(
+        "https://backend-hospital-managment.vercel.app/api/role"
+      );
       setDoctors(response.data);
     } catch (error) {
       console.error("Error fetching doctors:", error);
@@ -55,43 +52,38 @@ function Patient() {
     }
   };
 
-  const buildFormData = () => {
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("number", number);
-    formData.append("age", age);
-    formData.append("gender", gender);
-    formData.append("address", address);
-    formData.append("assignedDoctor", assignedDoctor);
-    if (file) formData.append("file", file);
-    return formData;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formData = buildFormData();
-      const response = await axios.post(patientApi, formData);
-      console.log("Submitted:", response.data);
-      navigate("/patientA");
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    }
-  };
+      const payload = {
+        name,
+        email,
+        number,
+        age,
+        gender,
+        address,
+        assignedDoctor,
+      };
 
-  const handleUpdate = async () => {
-    try {
-      const formData = buildFormData();
-      const response = await axios.put(`${patientApi}/${id}`, formData);
-      console.log("Updated:", response.data);
+      if (id) {
+        const response = await axios.put(`${patientApi}/${id}`, payload);
+        console.log("Updated:", response.data);
+      } else {
+        const response = await axios.post(patientApi, payload);
+        console.log("Created:", response.data);
+      }
+
       navigate("/patientA");
     } catch (error) {
-      console.error("Error updating patient:", error);
+      console.error("Error saving patient:", error);
+      alert("Something went wrong. Please check your input.");
     }
   };
 
   const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this patient?"))
+      return;
+
     try {
       await axios.delete(`${patientApi}/${id}`);
       console.log("Deleted successfully");
@@ -106,7 +98,9 @@ function Patient() {
       <PatientDashboard />
       <div className="container mt-5">
         <div className="card shadow-lg p-4 rounded-4">
-          <h2 className="text-center text-primary">Patient Registration</h2>
+          <h2 className="text-center text-primary">
+            {id ? "Update Patient" : "Patient Registration"}
+          </h2>
           <form onSubmit={handleSubmit} className="mt-4">
             <div className="mb-3">
               <input
@@ -123,7 +117,7 @@ function Patient() {
               <input
                 type="email"
                 className="form-control"
-                placeholder="Email (Optional)"
+                placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -191,36 +185,18 @@ function Patient() {
               </select>
             </div>
 
-            <div className="mb-3">
-              <input
-                type="file"
-                className="form-control"
-                onChange={(e) => setFile(e.target.files[0])}
-              />
-            </div>
-
             <div className="d-flex justify-content-between">
-              {!id ? (
-                <button type="submit" className="btn btn-success btn-lg">
-                  Submit
+              <button type="submit" className="btn btn-success btn-lg">
+                {id ? "Update" : "Submit"}
+              </button>
+              {id && (
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  className="btn btn-danger btn-lg"
+                >
+                  Delete
                 </button>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleUpdate}
-                    className="btn btn-warning btn-lg"
-                  >
-                    Update
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    className="btn btn-danger btn-lg"
-                  >
-                    Delete
-                  </button>
-                </>
               )}
             </div>
           </form>

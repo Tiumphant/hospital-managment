@@ -14,109 +14,82 @@ function PatientD() {
   const [address, setAddress] = useState("");
   const [assignedDoctor, setAssignedDoctor] = useState("");
   const [doctors, setDoctors] = useState([]);
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null);
-
-  const apiBase = process.env.REACT_APP_API_URL;
-  const api = `${apiBase}/api/patient`;
-  const doctorApi = `${apiBase}/api/role`;
 
   const { id } = useParams();
   const navigate = useNavigate();
+  const patientApi =
+    "https://backend-hospital-managment.vercel.app/api/patient";
 
   useEffect(() => {
     fetchDoctors();
-    if (id) {
-      getOne();
-    }
+    if (id) fetchPatient();
   }, [id]);
 
   const fetchDoctors = async () => {
     try {
-      const res = await axios.get(doctorApi);
-      setDoctors(res.data);
-    } catch (err) {
-      console.error("Error fetching doctors:", err);
+      const response = await axios.get(
+        "https://backend-hospital-managment.vercel.app/api/role"
+      );
+      setDoctors(response.data);
+    } catch (error) {
+      console.error("Error fetching doctors:", error);
     }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    setPreview(URL.createObjectURL(file));
+  const fetchPatient = async () => {
+    try {
+      const response = await axios.get(`${patientApi}/${id}`);
+      const data = response.data;
+      setName(data.name);
+      setEmail(data.email);
+      setNumber(data.number);
+      setAge(data.age);
+      setGender(data.gender);
+      setAddress(data.address);
+      setAssignedDoctor(data.assignedDoctor);
+    } catch (error) {
+      console.error("Error fetching patient:", error);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("number", number);
-    formData.append("age", age);
-    formData.append("gender", gender);
-    formData.append("address", address);
-    formData.append("assignedDoctor", assignedDoctor || "");
-    if (image) formData.append("image", image);
-
     try {
-      const res = await axios.post(api, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      console.log("Created:", res.data);
-      navigate("/patientlist");
-    } catch (err) {
-      console.error("Create Error:", err);
-    }
-  };
+      const payload = {
+        name,
+        email,
+        number,
+        age,
+        gender,
+        address,
+        assignedDoctor,
+      };
 
-  const editData = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("number", number);
-    formData.append("age", age);
-    formData.append("gender", gender);
-    formData.append("address", address);
-    formData.append("assignedDoctor", assignedDoctor || "");
-    if (image) formData.append("image", image);
+      if (id) {
+        const response = await axios.put(`${patientApi}/${id}`, payload);
+        console.log("Updated:", response.data);
+      } else {
+        const response = await axios.post(patientApi, payload);
+        console.log("Created:", response.data);
+      }
 
-    try {
-      const res = await axios.put(`${api}/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      console.log("Updated:", res.data);
-      navigate("/patientlist");
-    } catch (err) {
-      console.error("Update Error:", err);
-    }
-  };
-
-  const deleteData = async () => {
-    try {
-      await axios.delete(`${api}/${id}`);
-      console.log("Deleted");
       navigate("/patientA");
-    } catch (err) {
-      console.error("Delete Error:", err);
+    } catch (error) {
+      console.error("Error saving patient:", error);
+      alert("Something went wrong. Please check your input.");
     }
   };
 
-  const getOne = async () => {
-    try {
-      const res = await axios.get(`${api}/${id}`);
-      const data = res.data;
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this patient?"))
+      return;
 
-      setName(data.name || "");
-      setEmail(data.email || "");
-      setNumber(data.number || "");
-      setAge(data.age || "");
-      setGender(data.gender?.toLowerCase() || "");
-      setAddress(data.address || "");
-      setAssignedDoctor(data.assignedDoctor?._id || "");
-      if (data.imageUrl) setPreview(data.imageUrl);
-    } catch (err) {
-      console.error("Fetch Error:", err);
+    try {
+      await axios.delete(`${patientApi}/${id}`);
+      console.log("Deleted successfully");
+      navigate("/patientA");
+    } catch (error) {
+      console.error("Error deleting patient:", error);
     }
   };
 
@@ -125,8 +98,10 @@ function PatientD() {
       <DoctorDashboard />
       <div className="container mt-5">
         <div className="card shadow-lg p-4 rounded-4">
-          <h2 className="text-center text-primary">Patient Registration</h2>
-          <form onSubmit={id ? editData : handleSubmit} className="mt-4">
+          <h2 className="text-center text-primary">
+            {id ? "Update Patient" : "Patient Registration"}
+          </h2>
+          <form onSubmit={handleSubmit} className="mt-4">
             <div className="mb-3">
               <input
                 type="text"
@@ -137,15 +112,17 @@ function PatientD() {
                 required
               />
             </div>
+
             <div className="mb-3">
               <input
                 type="email"
                 className="form-control"
-                placeholder="Email (Optional)"
+                placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+
             <div className="mb-3">
               <input
                 type="text"
@@ -156,6 +133,7 @@ function PatientD() {
                 required
               />
             </div>
+
             <div className="mb-3">
               <input
                 type="number"
@@ -166,6 +144,7 @@ function PatientD() {
                 required
               />
             </div>
+
             <div className="mb-3">
               <select
                 className="form-control"
@@ -179,6 +158,7 @@ function PatientD() {
                 <option value="other">Other</option>
               </select>
             </div>
+
             <div className="mb-3">
               <input
                 type="text"
@@ -189,6 +169,7 @@ function PatientD() {
                 required
               />
             </div>
+
             <div className="mb-3">
               <select
                 className="form-control"
@@ -203,22 +184,7 @@ function PatientD() {
                 ))}
               </select>
             </div>
-            <div className="mb-3">
-              <input
-                type="file"
-                className="form-control"
-                onChange={handleImageChange}
-              />
-              {preview && (
-                <div className="mt-2">
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    style={{ maxHeight: "150px" }}
-                  />
-                </div>
-              )}
-            </div>
+
             <div className="d-flex justify-content-between">
               <button type="submit" className="btn btn-success btn-lg">
                 {id ? "Update" : "Submit"}
@@ -226,7 +192,7 @@ function PatientD() {
               {id && (
                 <button
                   type="button"
-                  onClick={deleteData}
+                  onClick={handleDelete}
                   className="btn btn-danger btn-lg"
                 >
                   Delete

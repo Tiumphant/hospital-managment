@@ -15,8 +15,8 @@ import PatientA from "./page/PatientA";
 import PatientC from "./page/PatientC";
 import PatientList from "./page/Patientlist";
 import PatientlistK from "./page/PatientlistK";
-import PatientCard from "./page/PatientCard";
-import PatientCardK from "./page/PatientCardK";
+// import PatientCard from "./page/PatientCard";
+// import PatientCardK from "./page/PatientCardK";
 
 import Department from "./page/Department";
 import DepartmentC from "./page/DepartmentC";
@@ -36,6 +36,7 @@ import RoleC from "./page/RoleC";
 import RoleD from "./page/RoleD";
 import Rolelist from "./page/Rolelist";
 import RolelistK from "./page/RolelistK";
+import EditAppointment from "./page/EditAppointment";
 
 function App() {
   return (
@@ -62,10 +63,10 @@ function App() {
         <Route path="/patientlist" element={<PatientList />} />
         <Route path="/patientlistK" element={<PatientlistK />} />
         <Route path="/patientlistK/:id" element={<PatientlistK />} />
-        <Route path="/patientcard" element={<PatientCard />} />
+        {/* <Route path="/patientcard" element={<PatientCard />} />
         <Route path="/patientcard/:id" element={<PatientCard />} />
         <Route path="/patientcardK" element={<PatientCardK />} />
-        <Route path="/patientcardK/:id" element={<PatientCardK />} />
+        <Route path="/patientcardK/:id" element={<PatientCardK />} /> */}
 
         <Route path="/department" element={<Department />} />
         <Route path="/department/:id" element={<Department />} />
@@ -76,13 +77,15 @@ function App() {
 
         <Route path="/appointment" element={<Appointment />} />
         <Route path="/appointmentA" element={<AppointmentA />} />
+        <Route path="/appointmentA/:id" element={<AppointmentA />} />
         <Route path="/appointmentD" element={<AppointmentD />} />
         <Route path="/appointmentD/:id" element={<AppointmentD />} />
         <Route path="/appointmentC" element={<AppointmentC />} />
         <Route path="/appointmentC/:id" element={<AppointmentC />} />
         <Route path="/appointmentlist" element={<Appointmentlist />} />
         <Route path="/appointmentlistK" element={<AppointmentlistK />} />
-
+        <Route path="/editappointment" element={<EditAppointment />} />
+        <Route path="/editappointment/:id" element={<EditAppointment />} />
         <Route path="/role" element={<Role />} />
         <Route path="/roleA" element={<RoleA />} />
         <Route path="/roleA/:id" element={<RoleA />} />

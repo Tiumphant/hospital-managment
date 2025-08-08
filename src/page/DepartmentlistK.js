@@ -6,11 +6,12 @@ import Dashboard from "./Dashboard";
 function DepartmentlistK() {
   const [data, setData] = useState([]);
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL =
+    "https://backend-hospital-managment.vercel.app/api/department";
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/department`)
+      .get(`${API_URL}`)
       .then((response) => {
         setData(response.data);
         console.log("Fetched data:", response.data);
@@ -22,7 +23,7 @@ function DepartmentlistK() {
 
   function Departmentdelete(id) {
     axios
-      .delete(`${API_URL}/department/${id}`)
+      .delete(`${API_URL}/${id}`)
       .then((response) => {
         console.log("Data successfully deleted:", response.data);
         setData((prevData) => prevData.filter((user) => user._id !== id));

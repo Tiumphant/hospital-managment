@@ -14,94 +14,82 @@ function PatientC() {
   const [address, setAddress] = useState("");
   const [assignedDoctor, setAssignedDoctor] = useState("");
   const [doctors, setDoctors] = useState([]);
-  const [file, setFile] = useState(null);
 
-  const BASE_URL = process.env.REACT_APP_API_URL;
-  const api = `${BASE_URL}/api/appointment`;
-  const doctorApi = `${BASE_URL}/api/role`;
   const { id } = useParams();
   const navigate = useNavigate();
+  const patientApi =
+    "https://backend-hospital-managment.vercel.app/api/patient";
 
   useEffect(() => {
     fetchDoctors();
-    if (id) {
-      getOne();
-    }
+    if (id) fetchPatient();
   }, [id]);
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get(doctorApi);
+      const response = await axios.get(
+        "https://backend-hospital-managment.vercel.app/api/role"
+      );
       setDoctors(response.data);
     } catch (error) {
       console.error("Error fetching doctors:", error);
     }
   };
 
-  const getOne = async () => {
+  const fetchPatient = async () => {
     try {
-      const response = await axios.get(`${api}/${id}`);
-      if (response.data) {
-        const data = response.data;
-        setName(data.name || "");
-        setEmail(data.email || "");
-        setNumber(data.number || "");
-        setAge(data.age || "");
-        setGender(data.gender || "");
-        setAddress(data.address || "");
-        setAssignedDoctor(data.assignedDoctor || "");
-      }
+      const response = await axios.get(`${patientApi}/${id}`);
+      const data = response.data;
+      setName(data.name);
+      setEmail(data.email);
+      setNumber(data.number);
+      setAge(data.age);
+      setGender(data.gender);
+      setAddress(data.address);
+      setAssignedDoctor(data.assignedDoctor);
     } catch (error) {
-      console.log("Error fetching patient:", error);
+      console.error("Error fetching patient:", error);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("name", String(name).trim());
-    formData.append("email", String(email).trim());
-    formData.append("number", String(number).trim());
-    formData.append("age", String(age).trim());
-    formData.append("gender", String(gender).trim());
-    formData.append("address", String(address).trim());
-    formData.append("assignedDoctor", assignedDoctor);
-    if (file) {
-      formData.append("image", file);
-    }
-
     try {
+      const payload = {
+        name,
+        email,
+        number,
+        age,
+        gender,
+        address,
+        assignedDoctor,
+      };
+
       if (id) {
-        // Update existing patient
-        await axios.put(`${api}/${id}`, formData);
-        alert("Patient updated successfully!");
+        const response = await axios.put(`${patientApi}/${id}`, payload);
+        console.log("Updated:", response.data);
       } else {
-        // Create new patient
-        await axios.post(api, formData);
-        alert("Patient created successfully!");
+        const response = await axios.post(patientApi, payload);
+        console.log("Created:", response.data);
       }
-      navigate("/patientlistK");
+
+      navigate("/patientlistk");
     } catch (error) {
-      if (error.response?.status === 409) {
-        const message =
-          error.response?.data?.message || "Patient already exists.";
-        alert(message);
-      } else {
-        console.error("Error submitting form:", error);
-        alert("An unexpected error occurred while submitting the form.");
-      }
+      console.error("Error saving patient:", error);
+      alert("Something went wrong. Please check your input.");
     }
   };
 
-  const deleteData = async () => {
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this patient?"))
+      return;
+
     try {
-      await axios.delete(`${api}/${id}`);
-      alert("Patient deleted successfully.");
-      navigate("/patientlistK");
+      await axios.delete(`${patientApi}/${id}`);
+      console.log("Deleted successfully");
+      navigate("/patientA");
     } catch (error) {
-      console.log("Error deleting:", error);
-      alert("Failed to delete patient.");
+      console.error("Error deleting patient:", error);
     }
   };
 
@@ -111,7 +99,7 @@ function PatientC() {
       <div className="container mt-5">
         <div className="card shadow-lg p-4 rounded-4">
           <h2 className="text-center text-primary">
-            {id ? "Edit Patient" : "Patient Registration"}
+            {id ? "Update Patient" : "Patient Registration"}
           </h2>
           <form onSubmit={handleSubmit} className="mt-4">
             <div className="mb-3">
@@ -124,15 +112,17 @@ function PatientC() {
                 required
               />
             </div>
+
             <div className="mb-3">
               <input
                 type="email"
                 className="form-control"
-                placeholder="Email (Optional)"
+                placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+
             <div className="mb-3">
               <input
                 type="text"
@@ -143,6 +133,7 @@ function PatientC() {
                 required
               />
             </div>
+
             <div className="mb-3">
               <input
                 type="number"
@@ -153,6 +144,7 @@ function PatientC() {
                 required
               />
             </div>
+
             <div className="mb-3">
               <select
                 className="form-control"
@@ -166,6 +158,7 @@ function PatientC() {
                 <option value="other">Other</option>
               </select>
             </div>
+
             <div className="mb-3">
               <input
                 type="text"
@@ -176,6 +169,7 @@ function PatientC() {
                 required
               />
             </div>
+
             <div className="mb-3">
               <select
                 className="form-control"
@@ -190,29 +184,16 @@ function PatientC() {
                 ))}
               </select>
             </div>
-            <div className="mb-3">
-              <input
-                type="file"
-                className="form-control"
-                onChange={(e) => setFile(e.target.files[0])}
-                required={!id}
-              />
-            </div>
 
             <div className="d-flex justify-content-between">
-              <button
-                type="submit"
-                className={`btn btn-${
-                  id ? "warning" : "success"
-                } btn-lg animate-button`}
-              >
+              <button type="submit" className="btn btn-success btn-lg">
                 {id ? "Update" : "Submit"}
               </button>
               {id && (
                 <button
                   type="button"
-                  onClick={deleteData}
-                  className="btn btn-danger btn-lg animate-button"
+                  onClick={handleDelete}
+                  className="btn btn-danger btn-lg"
                 >
                   Delete
                 </button>

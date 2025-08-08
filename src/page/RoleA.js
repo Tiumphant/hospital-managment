@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PatientDashboard from "./PatientDashboard";
+
 function RoleA() {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -9,8 +10,10 @@ function RoleA() {
 
   const update = async () => {
     try {
-      const urlapi = `${process.env.REACT_APP_API_URL}/api/role`;
-      let result = urlapi.data;
+      const urlapi = `https://backend-hospital-managment.vercel.app/api/role`;
+      const response = await axios.get(urlapi);
+      const result = response.data;
+
       console.log("Fetched API successfully:", result);
 
       setData(result);
@@ -24,16 +27,6 @@ function RoleA() {
     update();
   }, []);
 
-  //   const delData = async (id) => {
-  //     try {
-  //       await axios.delete(`http://localhost:8000/api/role/${id}`);
-  //       setData((p) => p.filter((item) => item._id !== id));
-  //       setFilteredData((p) => p.filter((item) => item._id !== id));
-  //     } catch (error) {
-  //       console.error("Error deleting role:", error);
-  //     }
-  //   };
-
   useEffect(() => {
     if (!searchTerm) {
       setFilteredData(data);
@@ -45,6 +38,17 @@ function RoleA() {
       );
     }
   }, [searchTerm, data]);
+
+  // Optional: Delete functionality
+  // const delData = async (id) => {
+  //   try {
+  //     await axios.delete(`${process.env.REACT_APP_API_URL}/api/role/${id}`);
+  //     setData((prev) => prev.filter((item) => item._id !== id));
+  //     setFilteredData((prev) => prev.filter((item) => item._id !== id));
+  //   } catch (error) {
+  //     console.error("Error deleting role:", error);
+  //   }
+  // };
 
   return (
     <div>
@@ -71,10 +75,13 @@ function RoleA() {
               <td>{item.name}</td>
               <td>{item.description}</td>
               {/* <td>
-              <Link to={`/Role/${item._id}`}>
-                      <button>Edit</button>
-                    </Link>
-                <button onClick={() => delData(item._id)} className="btn btn-danger">
+                <Link to={`/Role/${item._id}`}>
+                  <button className="btn btn-primary">Edit</button>
+                </Link>
+                <button
+                  onClick={() => delData(item._id)}
+                  className="btn btn-danger ml-2"
+                >
                   Delete
                 </button>
               </td> */}

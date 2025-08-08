@@ -63,9 +63,9 @@ function DoctorDashboard() {
                 </NavDropdown>
 
                 <NavDropdown title="Department" id="department-dropdown">
-                  <NavDropdown.Item as={Link} to="/department">
+                  {/* <NavDropdown.Item as={Link} to="/department">
                     Add Department
-                  </NavDropdown.Item>
+                  </NavDropdown.Item> */}
                   <NavDropdown.Item as={Link} to="/departmentlist">
                     Department List
                   </NavDropdown.Item>

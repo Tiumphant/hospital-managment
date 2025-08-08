@@ -6,11 +6,12 @@ import DoctorDashboard from "./DoctorDashboard";
 function Departmentlist() {
   const [data, setData] = useState([]);
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL =
+    "https://backend-hospital-managment.vercel.app/api/department";
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/department`)
+      .get(`${API_URL}`)
       .then((response) => {
         setData(response.data);
         console.log("Fetched data:", response.data);
@@ -22,7 +23,7 @@ function Departmentlist() {
 
   function Departmentdelete(id) {
     axios
-      .delete(`${API_URL}/department/${id}`)
+      .delete(`${API_URL}/${id}`)
       .then((response) => {
         console.log("Data successfully deleted:", response.data);
         setData((prevData) => prevData.filter((user) => user._id !== id));
@@ -42,7 +43,7 @@ function Departmentlist() {
             <th>Name</th>
             <th>Description</th>
             <th>Head Doctor</th>
-            <th>Actions</th>
+            {/* <th>Actions</th> */}
           </tr>
         </thead>
         <tbody>
@@ -52,7 +53,7 @@ function Departmentlist() {
               <td>{item.description}</td>
               <td>{item.head_doctor_id?.name || "Not Assigned"}</td>
               <td>
-                <Link to={`/department/${item._id}`}>
+                {/* <Link to={`/department/${item._id}`}>
                   <button className="btn btn-primary mx-2">Edit</button>
                 </Link>
                 <button
@@ -60,7 +61,7 @@ function Departmentlist() {
                   onClick={() => Departmentdelete(item._id)}
                 >
                   Delete
-                </button>
+                </button> */}
               </td>
             </tr>
           ))}

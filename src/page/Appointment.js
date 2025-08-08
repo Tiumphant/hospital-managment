@@ -18,28 +18,35 @@ function Appointment() {
   const [patients, setPatients] = useState([]);
   const [departments, setDepartments] = useState([]);
 
-  const BASE_URL = process.env.REACT_APP_API_URL;
-  const api = `${BASE_URL}/api/appointment`;
-  const doctorApi = `${BASE_URL}/api/role`;
-  const patientApi = `${BASE_URL}/api/patient`;
-  const departmentApi = `${BASE_URL}/api/department`;
+  const api = `https://backend-hospital-managment.vercel.app/api/appointment`;
+  const doctorApi = `https://backend-hospital-managment.vercel.app/api/role`;
+  const patientApi = `https://backend-hospital-managment.vercel.app/api/patient`;
+  const departmentApi = `https://backend-hospital-managment.vercel.app/api/department`;
 
   const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
-      const [doctorRes, patientRes, deptRes] = await Promise.all([
-        axios.get(doctorApi),
-        axios.get(patientApi),
-        axios.get(departmentApi),
-      ]);
-      setDoctors(doctorRes.data);
-      setPatients(patientRes.data);
-      setDepartments(deptRes.data);
+      try {
+        const [doctorRes, patientRes, deptRes] = await Promise.all([
+          axios.get(doctorApi),
+          axios.get(patientApi),
+          axios.get(departmentApi),
+        ]);
+        setDoctors(doctorRes.data);
+        setPatients(patientRes.data);
+        setDepartments(deptRes.data);
+      } catch (error) {
+        console.error("Error fetching dropdown data:", error);
+      }
     };
+
     fetchData();
-    if (id) getOne();
+
+    if (id) {
+      getOne();
+    }
   }, [id]);
 
   useEffect(() => {
@@ -51,19 +58,35 @@ function Appointment() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!patient_id) {
+      alert("Please select a valid patient from the list.");
+      return;
+    }
+
     try {
-      const response = await axios.post(api, {
+      const payload = {
         patient_id,
         doctor_id,
         department_id,
         status,
         reason,
         appointment_date,
-      });
-      console.log("Form submitted", response.data);
+      };
+
+      let response;
+      if (id) {
+        response = await axios.put(`${api}/${id}`, payload);
+        console.log("Appointment updated", response.data);
+      } else {
+        response = await axios.post(api, payload);
+        console.log("Appointment created", response.data);
+      }
+
       navigate("/appointmentA");
     } catch (error) {
       console.error("Submission error", error);
+      alert("An error occurred while saving the appointment.");
     }
   };
 
@@ -74,11 +97,17 @@ function Appointment() {
       setPatient_Id(data.patient_id || "");
       setDoctor_Id(data.doctor_id || "");
       setDepartment_Id(data.department_id || "");
-      setAppointment_Date(data.appointment_date || "");
+      setAppointment_Date(data.appointment_date?.substring(0, 10) || "");
       setStatus(data.status || "Scheduled");
       setReason(data.reason || "");
+
+      // Set patient name for editing view
+      const selectedPatient = patients.find((p) => p._id === data.patient_id);
+      if (selectedPatient) {
+        setPatientSearch(selectedPatient.name);
+      }
     } catch (err) {
-      console.error("Error fetching data", err);
+      console.error("Error fetching appointment by ID:", err);
     }
   };
 
@@ -87,7 +116,9 @@ function Appointment() {
       <PatientDashboard />
       <div className="container mt-5">
         <div className="card shadow-lg rounded p-4">
-          <h2 className="text-center text-primary mb-4">Book an Appointment</h2>
+          <h2 className="text-center text-primary mb-4">
+            {id ? "Edit Appointment" : "Book an Appointment"}
+          </h2>
           <form onSubmit={handleSubmit}>
             <div className="row mb-3">
               <div className="col-md-6">
@@ -181,7 +212,7 @@ function Appointment() {
 
             <div className="d-grid">
               <button type="submit" className="btn btn-success btn-lg">
-                Book Appointment
+                {id ? "Update Appointment" : "Book Appointment"}
               </button>
             </div>
           </form>
